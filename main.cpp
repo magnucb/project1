@@ -16,3 +16,5 @@ vector<int> u {N}
 vector<int> a {N}
 vector<int> b {N-1}
 vector<int> c {N-1}
+
+vector<int> f {N}
