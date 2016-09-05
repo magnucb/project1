@@ -122,3 +122,10 @@ for i in range(len(x)):
 u = u + 1
 u_exact = u_exact + 1
 eps = np.abs((u - u_exact)/u_exact)
+
+outfile = curdir+"/data/epsilon_python_n%d_v%s.dat"%(n,version)
+if os.path.isfile(outfile):
+    write2file("n, eps, h", filename=outfile, append=False)
+write2file("%0.2e, %0.20e, %0.20e"%(e,eps,h),
+           filename=outfile,
+           append=True)
