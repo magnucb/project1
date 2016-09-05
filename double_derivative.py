@@ -75,6 +75,14 @@ def backwardalg_i(ci, yi, bip, yip):
     yi_new = yi - k*yip # 2 flops
     return yi_new
 
+def test_diag(d):
+    #d must be 1-D array
+    n = len(d)
+    exact = np.zeros(n)
+    for i in range(n):
+        exact[i] = - float(i+2)/float(i+1)
+    return abs((d-exact)/exact)
+
 x0=0.0; x1=1.0; h=(x1-x0)/(n-1.0)
 #vectors of tridiagonal matrix A
 a = np.ones(n)
@@ -93,6 +101,12 @@ print "finished forward substitution"
 y = backwardalg_vec(b,c,y)
 print "finished backward substitution"
 
+#double check diagonal of matrix
+diag_error = test_diag(b)
+max_diag_error = max(diag_error)
+if max_test_diag >= 1e-14:
+    print "maximum error in diagonal is: e=", max_test_diag
+
 #solve diagonal matrix equation
 u = y/b.astype(float)
 
@@ -105,6 +119,6 @@ for i in range(len(x)):
 
 #find relative error
 #push u_exact and u up by one to correct for u_exact[i] = 0
-u = u - 1
-u_exact = u_exact - 1
+u = u + 1
+u_exact = u_exact + 1
 eps = np.abs((u - u_exact)/u_exact)
