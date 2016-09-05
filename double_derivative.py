@@ -14,7 +14,7 @@ Double differentials using Euler forward and backward methods:
 
 curdir = os.getcwd()
 try:
-    version = int(sys.argv[1])
+    version = int(sys.argv[2])
 except IndexError:
     version = "0"
 except ValueError:
@@ -41,3 +41,19 @@ def write2file(outstring,
         with open(filename,'w') as outfile:
             outfile.write(outstring)
     return outstring
+
+def forwardalg():
+    None
+def backwardalg():
+    None
+
+n=10; x0=0.0; x1=1.0; h=(x1-x0)/(n-1.0)
+#vectors of tridiagonal matrix A
+a = np.ones(n)
+b = -2*np.ones(n)
+c = np.ones(n)
+#vectors u, y and x
+u = np.zeros(n)
+x = np.linspace(x0,x1,n) 
+y = h*h*100*np.exp(-10*x)
+
