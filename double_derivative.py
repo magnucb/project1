@@ -3,7 +3,8 @@ import astropy as ap
 import matplotlib.pylab as pl
 import sys
 import os
-import scipy.linalg.lu as LU
+import scipy.linalg as linalg
+import time
 
 """
 Solve (d/dx)^2 u = f for known f.
@@ -52,14 +53,19 @@ def write2file(outstring,
 
 def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
     #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
-    for i in range(1,len(vert)):
+    n = len(vert)
+    u = np.zeros(n); u[:] = vert
+    #forward substitution
+    for i in range(1,n):
         k = tri_bottom[i]/float(tri_mid[i-1])
         tri_mid[i] -= k*tri_top[i-1]
         vert[i] -= k*vert[i-1]
-    i = len(vert) - 2
+    #backward subtitution
+    u[n-1] /= tri_mid[n-1]
+    i = n - 2
     while i > 0:
-        k = tri_top[i]/float(tri_mid[i+1])
-        vert[i] -= k*vert[i+1]
+        k = tri_top[n-i]/float(tri_mid[n-i+1])
+        u[n-i] -= k*u[n-i+1]
         i -= 1
     return vert
 
@@ -69,7 +75,7 @@ def specific_tridiag(vert):
     u = np.zeros(n) #solution u of poisson equation
     d = np.zeros(n); d[0] = -2.#array of diagonals
     #forward subst.
-    for i range(1, n):
+    for i in range(1, n):
         k = -(i)/float(d[i-1]) # 1flop
         vert[i] -= k*vert[i-1] # 2flop
         d[i] = -(i+1)/float(i) #(2.5flops)
@@ -82,7 +88,7 @@ def specific_tridiag(vert):
 def general_LU_decomp(A_matrix, vert):
     #arg: matrix of linear equation, array of solution
     n = len(vert)
-    P, L, U = LU(a = A_matrix, overwrite_a = False, check_finite = True)#scipy-function
+    P, L, U = linalg.lu(a = A_matrix, overwrite_a = False, check_finite = True)#scipy-function
     # solve L*w = y
     w = np.zeros(n); w[:] = vert[:] #make array w equal to vert
     for i in range(1,n):
@@ -112,40 +118,50 @@ A = np.diag(a[1:], -1) + np.diag(b, 0) + np.diag(c[:-1], 1)
 #vectors y and x
 x = np.linspace(x0,x1,n) 
 y = h*h*100*np.exp(-10*x)
-u_exact = 1-(1-np.exp(-10))*x-np.exp(-10*x)
+#u_exact = 1-(1-np.exp(-10))*x-np.exp(-10*x)
 
-#forward substitution
-b, y = forwardalg_vec(a,b,c,y)
-print "finished forward substitution"
-#backward substitution
-y = backwardalg_vec(b,c,y)
-print "finished backward substitution"
+t0 = time.clock()
 
+#general gaussian elimination of tri-diagonal matrix
+u_gen = general_tridiag(tri_bottom=a, tri_mid=b, tri_top=c, vert=y)
+t1 = time.clock()
+t_gen = t1 - t0
+
+#specific gaussian elimination of tri-diagonal matrix
+u_spec = specific_tridiag(vert=y)
+t2 = time.clock()
+t_spec = t2 - t1
+
+#LU-decomposition of tri-diagonal matrix
+u_LU = general_LU_decomp(A_matrix=A, vert=y)
+t3 = time.clock()
+t_gen= t3 - t2
+
+"""
 #double check diagonal of matrix
 diag_error = test_diag(b)
 max_diag_error = max(diag_error)
 if max_test_diag >= 1e-14:
     print "maximum error in diagonal is: e=", max_test_diag
+"""
 
-#solve diagonal matrix equation
-u = y/b.astype(float)
+#storing data
+datafile_u = curdir+"/data/dderiv_u_python_n%d_v%s.dat"%(n,version) #datafile for calculated arrays
+write2file("calculated arrays for u(x) for n=%d"%n, filename=datafile_u, append=False) # create first line of datafile
+datafile_time = curdir+"/data/dderiv_time_python_n%d_v%s.dat"%(n,version) #datafile for calculated arrays
+write2file("CPU time for the diffenrent", filename=datafile_time, append=False) #create first line of datafile
 
-outfile = curdir+"/data/dderiv_python_n%d_v%s.dat"%(n,version)
-write2file("x, f, u", filename=outfile, append=False)
+#store data for u(x) for three different methods
+write2file("x, f, u_gen, u_spec, u_LU", filename=datafile_u, append=False) # create first line of datafile
 for i in range(len(x)):
-    write2file("%1.20e, %1.20e, %1.20e"%(x[i], y[i]*h*h, u[i]),
-               filename=outfile,
+    write2file("%1.20e, %1.20e, %1.20e"%(x[i], y[i]/h/h, u_gen[i], u_u_spec[i], u_LU[i]),
+               filename=datafile_u,
                append=True)
-
-#find relative error
-#push u_exact and u up by one to correct for u_exact[i] = 0
-u = u + 1
-u_exact = u_exact + 1
-eps = np.abs((u - u_exact)/u_exact)
-
-outfile = curdir+"/data/epsilon_python_n%d_v%s.dat"%(n,version)
-if os.path.isfile(outfile):
-    write2file("n, eps, h", filename=outfile, append=False)
-write2file("%0.2e, %0.20e, %0.20e"%(e,eps,h),
-           filename=outfile,
-           append=True)
+#store data for CPU time
+datastring_base = "CPU-time for method: "
+methods = ["general_tridiagonal", "specific_tridiagonal", "LU-decomposition"]
+CPUtime = [t_gen, t_spec, t_LU]
+for i in range(len(methods)):
+    print write2file(datastring_base+"%s, %1.10e s"%(methods[i], CPUtime[i]),
+                     filename=datafile_time,
+                     append=True)
