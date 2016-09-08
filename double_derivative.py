@@ -3,6 +3,7 @@ import astropy as ap
 import matplotlib.pylab as pl
 import sys
 import os
+import scipy.linalg.lu as LU
 
 """
 Solve (d/dx)^2 u = f for known f.
@@ -49,31 +50,20 @@ def write2file(outstring,
             outfile.write(outstring)
     return outstring
 
-def forwardalg_vec(tri_bottom, tri_mid, tri_top, vert):
+def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
+    #arrays for tridiagonal matrix (below, on and above), array for vertical solution
     for i in range(1,len(vert)):
         k = tri_bottom[i]/float(tri_mid[i-1])
         tri_mid[i] -= k*tri_top[i-1]
         vert[i] -= k*vert[i-1]
-    return tri_mid, vert
-
-def forwardalg_i(ai, bi, yi, bim, cim, yim):
-    k = ai/float(bim) # 1 flop
-    bi_new = bi - k*cim # 2 flops
-    yi_new = yi - k*yim # 2 flops
-    return bi_new, yi_new
-
-def backwardalg_vec(tri_mid, tri_top, vert):
-    i = len(vert) -2
+    i = len(vert) - 2
     while i > 0:
         k = tri_top[i]/float(tri_mid[i+1])
         vert[i] -= k*vert[i+1]
         i -= 1
     return vert
 
-def backwardalg_i(ci, yi, bip, yip):
-    k = ci/float(bip) # 1 flop
-    yi_new = yi - k*yip # 2 flops
-    return yi_new
+def specific_tridiag(vert):
 
 def test_diag(d):
     #d must be 1-D array
