@@ -51,7 +51,7 @@ def write2file(outstring,
     return outstring
 
 def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
-    #arrays for tridiagonal matrix (below, on and above), array for vertical solution
+    #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
     for i in range(1,len(vert)):
         k = tri_bottom[i]/float(tri_mid[i-1])
         tri_mid[i] -= k*tri_top[i-1]
@@ -64,6 +64,36 @@ def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
     return vert
 
 def specific_tridiag(vert):
+    #arg: vertical array of solution
+    n = len(vert) #size of matrix/arrays
+    u = np.zeros(n) #solution u of poisson equation
+    d = np.zeros(n); d[0] = -2.#array of diagonals
+    #forward subst.
+    for i range(1, n):
+        k = -(i)/float(d[i-1]) # 1flop
+        vert[i] -= k*vert[i-1] # 2flop
+        d[i] = -(i+1)/float(i) #(2.5flops)
+    #solve upper triangular equation s
+    u[-1] = vert[-1]/float(d[-1]) # 1flop
+    for i in range(1,n):
+        u[-1-i] = (vert[-1-i] - u[-i])/float(d[-1-i]) # 2flops
+    return u
+
+def general_LU_decomp(A_matrix, vert):
+    #arg: matrix of linear equation, array of solution
+    n = len(vert)
+    P, L, U = LU(a = A_matrix, overwrite_a = False, check_finite = True)#scipy-function
+    # solve L*w = y
+    w = np.zeros(n); w[:] = vert[:] #make array w equal to vert
+    for i in range(1,n):
+        for j in range(0,i):
+            w[i] -= L[i,j]*w[j] #modify w according to 'w_i = y_i - sum(l_ij*w_j)'
+    u= np.zeros(n); u[:] = w[:] #make array y equal to w
+    #TODO DEFINITIVELY BUGS IN THE INDEXECTION BELOW
+    for i in range(2,n):
+        for j in range(i,n):
+            u[-1*i] -= U[-1*i,j]*u[j]/U[-1*i,-1*i] 
+    return u
 
 def test_diag(d):
     #d must be 1-D array
