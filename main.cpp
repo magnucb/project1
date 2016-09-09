@@ -18,3 +18,7 @@ vector<int> b {N-1}
 vector<int> c {N-1}
 
 vector<int> f {N}
+
+int 4ward(a, b, c){
+
+}
