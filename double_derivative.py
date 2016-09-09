@@ -18,12 +18,12 @@ curdir = os.getcwd()
 try:
     n = int(sys.argv[1])
 except IndexError:
-    n = 10
+    n = 5
 except ValueError:
     sys.exit("Commandline-argument must be integer \nFirst number of gridpoints, then version number")
 
 try:
-    version = int(sys.argv[2])
+    version = str(int(sys.argv[2]))
 except IndexError:
     version = "0"
 except ValueError:
@@ -53,22 +53,19 @@ def write2file(outstring,
 
 def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
     #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
-    n = len(vert)
-    u = np.zeros(n); u[:] = vert
+    y = vert[1:-1]; a = tri_bottom[:]; b = tri_mid[:]; c = tri_top[:]
+    n = len(y)
+    u = np.zeros(n+2) #first and last value must remain zero, dirichlet BC
     #forward substitution
-    for i in range(1,n):
-        k = tri_bottom[i]/float(tri_mid[i-1])
-        tri_mid[i] -= k*tri_top[i-1]
-        vert[i] -= k*vert[i-1]
+    for i in range(2,n): #do not change vert[0] and vert[1]
+        k = a[i]/float(b[i-1])
+        b[i] -= k*c[i-1]
+        y[i] -= k*y[i-1]
     #backward subtitution
-    u[n-1] /= tri_mid[n-1]
-    i = n - 2
-    while i > 0:
-        k = tri_top[n-i]/float(tri_mid[n-i+1])
-        u[n-i] -= k*u[n-i+1]
-        i -= 1
-    return vert
-
+    u[n] = vert[n-1]/tri_mid[n-1]
+    for i in reversed(xrange(1,n)):
+        u[i] = (y[i] - u[i+1]*c[i])/float(b[i])
+        
 def specific_tridiag(vert):
     #arg: vertical array of solution
     n = len(vert) #size of matrix/arrays
@@ -89,17 +86,11 @@ def general_LU_decomp(A_matrix, vert):
     #arg: matrix of linear equation, array of solution
     n = len(vert)
     P, L, U = linalg.lu(a = A_matrix, overwrite_a = False, check_finite = True)#scipy-function
-    # solve L*w = y
-    w = np.zeros(n); w[:] = vert[:] #make array w equal to vert
-    for i in range(1,n):
-        for j in range(0,i):
-            w[i] -= L[i,j]*w[j] #modify w according to 'w_i = y_i - sum(l_ij*w_j)'
-    u= np.zeros(n); u[:] = w[:] #make array y equal to w
-    #TODO DEFINITIVELY BUGS IN THE INDEXECTION BELOW
-    for i in range(2,n):
-        for j in range(i,n):
-            u[-1*i] -= U[-1*i,j]*u[j]/U[-1*i,-1*i] 
-    return u
+    # solve L*w = vert. #overwrite the array vert.
+    linalg.solve(U,vert, sym_pos=True, lower=True, overwrite_b=True)
+    # solve L*w = vert. #overwrite the array vert.
+    linalg.solve(U,vert, sym_pos=True, lower=True, overwrite_b=True)
+    return vert
 
 def test_diag(d):
     #d must be 1-D array
@@ -111,14 +102,14 @@ def test_diag(d):
 
 x0=0.0; x1=1.0; h=(x1-x0)/(n-1.0)
 #vectors of tridiagonal matrix A
-a = np.ones(n)
-b = -2*np.ones(n)
-c = np.ones(n)
+a = -1.0*np.ones(n)
+b = 2.0*np.ones(n)
+c = -1.0*np.ones(n)
 A = np.diag(a[1:], -1) + np.diag(b, 0) + np.diag(c[:-1], 1)
 #vectors y and x
 x = np.linspace(x0,x1,n) 
 y = h*h*100*np.exp(-10*x)
-#u_exact = 1-(1-np.exp(-10))*x-np.exp(-10*x)
+u_exact = 1-(1-np.exp(-10))*x-np.exp(-10*x)
 
 t0 = time.clock()
 
@@ -154,7 +145,7 @@ write2file("CPU time for the diffenrent", filename=datafile_time, append=False) 
 #store data for u(x) for three different methods
 write2file("x, f, u_gen, u_spec, u_LU", filename=datafile_u, append=False) # create first line of datafile
 for i in range(len(x)):
-    write2file("%1.20e, %1.20e, %1.20e"%(x[i], y[i]/h/h, u_gen[i], u_u_spec[i], u_LU[i]),
+    write2file("%1.20e, %1.20e, %1.20e"%(x[i], y[i]/h/h, u_gen[i], u_spec[i], u_LU[i]),
                filename=datafile_u,
                append=True)
 #store data for CPU time
