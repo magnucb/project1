@@ -45,19 +45,19 @@ def write2file(outstring,
     outstring = str(outstring)
     if append:
         with open(filename,'a') as outfile:
-            outfile.write(outstring)
+            outfile.write(outstring + "\n")
     else:
         with open(filename,'w') as outfile:
-            outfile.write(outstring)
+            outfile.write(outstring + "\n")
     return outstring
 
 def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
     #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
-    y = vert[1:-1]; a = tri_bottom[:]; b = tri_mid[:]; c = tri_top[:]
-    n = len(y)
+    y = vert[1:-1]; a = tri_bottom[1:-1]; b = tri_mid[1:-1]; c = tri_top[1:-1]
+    n = len(y) #number of matrix operations
     u = np.zeros(n+2) #first and last value must remain zero, dirichlet BC
     #forward substitution
-    for i in range(2,n): #do not change vert[0] and vert[1]
+    for i in range(1,n): #do not change vert[0] and vert[1]
         k = a[i]/float(b[i-1])
         b[i] -= k*c[i-1]
         y[i] -= k*y[i-1]
@@ -65,21 +65,22 @@ def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
     u[n] = vert[n-1]/tri_mid[n-1]
     for i in reversed(xrange(1,n)):
         u[i] = (y[i] - u[i+1]*c[i])/float(b[i])
-        
+    return u
+
 def specific_tridiag(vert):
     #arg: vertical array of solution
-    n = len(vert) #size of matrix/arrays
-    u = np.zeros(n) #solution u of poisson equation
-    d = np.zeros(n); d[0] = -2.#array of diagonals
-    #forward subst.
-    for i in range(1, n):
-        k = -(i)/float(d[i-1]) # 1flop
-        vert[i] -= k*vert[i-1] # 2flop
-        d[i] = -(i+1)/float(i) #(2.5flops)
-    #solve upper triangular equation s
-    u[-1] = vert[-1]/float(d[-1]) # 1flop
-    for i in range(1,n):
-        u[-1-i] = (vert[-1-i] - u[-i])/float(d[-1-i]) # 2flops
+    n = len(vert) -2 #number of matrix operations
+    u = np.zeros(n+2) #first and last value must remain zero, dirichlet BC
+    d = np.zeros(n); d[0] = 2.#array of diagonals
+    #forward substitution
+    for i in range(1,n): #do not change vert[0] and vert[1]
+        k = -(i)/float(d[i-1]) #1flop
+        vert[i] -= k*vert[i-1] #2flop
+        d[i] = -(i+1)/float(i) #(2flops)
+    #backward subtitution
+    u[n] = vert[n-1]/d[n-1]
+    for i in reversed(xrange(1,n)):
+        u[i] = (vert[i] - u[i+1])/float(d[i])
     return u
 
 def general_LU_decomp(A_matrix, vert):
@@ -126,7 +127,7 @@ t_spec = t2 - t1
 #LU-decomposition of tri-diagonal matrix
 u_LU = general_LU_decomp(A_matrix=A, vert=y)
 t3 = time.clock()
-t_gen= t3 - t2
+t_LU= t3 - t2
 
 """
 #double check diagonal of matrix
@@ -137,15 +138,15 @@ if max_test_diag >= 1e-14:
 """
 
 #storing data
-datafile_u = curdir+"/data/dderiv_u_python_n%d_v%s.dat"%(n,version) #datafile for calculated arrays
+datafile_u = curdir+"/data/dderiv_u_python_v%s_n%d.dat"%(version,n) #datafile for calculated arrays
 write2file("calculated arrays for u(x) for n=%d"%n, filename=datafile_u, append=False) # create first line of datafile
-datafile_time = curdir+"/data/dderiv_time_python_n%d_v%s.dat"%(n,version) #datafile for calculated arrays
+datafile_time = curdir+"/data/dderiv_time_python_v%s_n%d.dat"%(version,n) #datafile for calculated arrays
 write2file("CPU time for the diffenrent", filename=datafile_time, append=False) #create first line of datafile
 
 #store data for u(x) for three different methods
 write2file("x, f, u_gen, u_spec, u_LU", filename=datafile_u, append=False) # create first line of datafile
 for i in range(len(x)):
-    write2file("%1.20e, %1.20e, %1.20e"%(x[i], y[i]/h/h, u_gen[i], u_spec[i], u_LU[i]),
+    write2file("%1.10e, %1.10e, %1.10e, %1.10e, %1.10e"%(x[i], y[i]/h/h, u_gen[i], u_spec[i], u_LU[i]),
                filename=datafile_u,
                append=True)
 #store data for CPU time
