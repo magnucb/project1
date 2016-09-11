@@ -127,7 +127,7 @@ t_spec = t2 - t1
 #LU-decomposition of tri-diagonal matrix
 u_LU = general_LU_decomp(A_matrix=A, vert=y)
 t3 = time.clock()
-t_LU= t3 - t2
+t_LU = t3 - t2
 
 """
 #double check diagonal of matrix
