@@ -89,12 +89,14 @@ def general_LU_decomp(A_matrix, vert):
     if len(vert)>1000:
         return np.array([False])
     #arg: matrix of linear equation, array of solution
-    n = len(vert)
+    u = np.zeros(len(vert))
+    A_matrix = A_matrix[1:-1,1:-1]
+    vert = vert[1:-1] #do not work on Dirichlet BC
     P, L, U = linalg.lu(a = A_matrix, overwrite_a = False, check_finite = True) #scipy-function
     # solve L*w = vert. #overwrite the array vert.
     w = linalg.solve(U,vert, sym_pos=True, lower=True)
     # solve L*w = vert. #overwrite the array vert.
-    u = linalg.solve(U,vert, sym_pos=True, lower=True)
+    u[1:-1] = linalg.solve(U,vert, sym_pos=True, lower=True)
     return u
 
 def test_diag(d):

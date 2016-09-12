@@ -8,6 +8,7 @@ version = 2
 data_dict = {}
 column_dict = {}
 n_range = [10,100,1000]
+
 for n in n_range:
     #loop through different n's
     with open(curdir+"/data/dderiv_u_python_v%s_n%d.dat"%(version,n), 'r') as infile:
@@ -27,11 +28,9 @@ for n in n_range:
                     word = float(word)
                 except ValueError: #word cannot be turned to number
                     print word
-                    sys.exit("There is something wrong with your data-file \n%s cannot be turned to numbers"%word)
+                    sys.exit("There is something wrong with your data-file \n'%s' cannot be turned to numbers"%word)
                 dict_of_content[key].append(word)
         data_dict["n=%d"%n] = dict_of_content
-print data_dict["n=10"]["x"]
-print type(data_dict["n=10"]["x"])
 
 def u_exact(x):
     u =  1.0 - (1.0 - pyl.exp(-10.0))*x - pyl.exp(-10.0*x)
@@ -96,27 +95,71 @@ def compare_methods(n):
     exact = u_exact(x)
     pyl.figure("compare methods")
     pyl.grid(True)
+    pyl.hold(True)
     pyl.xlabel("x")
     pyl.ylabel("u(x)")
     pyl.title("function u for three different methods (n=%d)"%n)
-    pyl.legend(loc='best')
+
+    pyl.plot(x, exact, 'k-', label="exact")
+    pyl.plot(x, gen, 'b-', label="general tridiagonal")
+    pyl.plot(x, spec, 'g-', label="specific tridiagonal")
+    pyl.plot(x, LU, 'r-', label="LU-decomp.")
+    pyl.legend(loc='best', prop={'size':9})
     pyl.savefig(curdir+"/img/compare_methods_n%d.png"%n)
-def compare_general_n():
-    None
-def compare_specific_n():
-    None
-def epsilon_plots():
-    None
+               
+def compare_approx_n(n_range=[10,100,1000], approx_string="general"):
+    """
+    For all n's available, plot the general approximation and 
+    exact solution
+    """
+    if approx_string == "general":
+        approx_key = "u_gen"
+    elif approx_string == "specific":
+        approx_key = "u_spec"
+    else:
+        sys.exit("In function 'compare_approx_n', wrong argument 'approx_string'")
+    pyl.figure("compare %s"%approx_string)
+    pyl.grid(True)
+    pyl.hold(True)
+    pyl.xlabel("x")
+    pyl.ylabel("u(x)")
+    pyl.title("approximation by %s tridiagonal method"%approx_string)
+
+    for n in n_range:
+        x = pyl.array(data_dict["n=%d"%n]["x"])
+        u_approx = pyl.array(data_dict["n=%d"%n][approx_key])
+        pyl.plot(x, u_approx, '--', label="n=%1.1e"%n)
+
+    x = pyl.linspace(0,1,1001)
+    exact = u_exact(x)
+    pyl.plot(x, exact, '-', label="exact")
+    pyl.legend(loc='best', prop={'size':9})
+    pyl.savefig(curdir+"/img/compare_%s_n_n%d.png"%(approx_string,n))
     
+def epsilon_plots(n_range=[10,100,1000]):
+    eps_max = pyl.zeros(len(n_range))
+    h = pyl.zeros(len(n_range))
+    for i, n in enumerate(n_range):
+        x = pyl.array(data_dict["n=%d"%n]["x"])
+        u = u_exact(x)
+        v = pyl.array(data_dict["n=%d"%n]["u_gen"])
+        eps = pyl.log10(abs((v-u)/u))
+        eps_max[i] = max(eps)
+        h[i] = pyl.log10(1.0/(n+1))
+    pyl.figure("epsilon")
+    pyl.grid(True)
+    pyl.hold(True)
+    pyl.xlabel(r"\log_{10}(h)")
+    pyl.ylabel(r"$\epsilon = \log_{10}\left(\frac{u_{approx}-e_{exact}}{u_{exact}}\right)$")
+    pyl.title("log-plot of epsilon against step-length h")
+    pyl.plot(h, eps_max, 'ko')
+    pyl.legend(loc='best')
+    pyl.savefig(curdir+"/img/epsilon.png")
 
-
-
-
-
-#curdir = os.getcwd()
-#version = int(sys.argv[1])
-#n       = int(sys.argv[2])
-#plot_generator(version, n)
-pyl.xkcd()
-harry_plotter()
-pyl.savefig(curdir+"/img/frontpage.png")
+#make plots
+compare_methods(n=1000)
+#pyl.show()
+compare_approx_n(approx_string="general")
+compare_approx_n(approx_string="specific")
+epsilon_plots()
+#pyl.show()
