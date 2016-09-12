@@ -51,47 +51,51 @@ def write2file(outstring,
             outfile.write(outstring + "\n")
     return outstring
 
-def general_tridiag(tri_bottom, tri_mid, tri_top, vert):
+def general_tridiag(a, b, c, y):
     #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
-    y = vert[1:-1]; a = tri_bottom[1:-1]; b = tri_mid[1:-1]; c = tri_top[1:-1]
     n = len(y) #number of matrix operations
-    u = np.zeros(n+2) #first and last value must remain zero, dirichlet BC
+    u = np.zeros(n) #first and last value must remain zero, dirichlet BC
     #forward substitution
-    for i in range(1,n): #do not change vert[0] and vert[1]
+    for i in range(1,n-1): #do not change vert[0] and vert[1]
         k = a[i]/float(b[i-1])
         b[i] -= k*c[i-1]
         y[i] -= k*y[i-1]
     #backward subtitution
-    u[n] = vert[n-1]/tri_mid[n-1]
-    for i in reversed(xrange(1,n)):
+    u[n-2] = y[n-2]/b[n-2] #second to last array-element
+    for i in reversed(xrange(1,n-2)):
         u[i] = (y[i] - u[i+1]*c[i])/float(b[i])
     return u
 
-def specific_tridiag(vert):
+def specific_tridiag(y, test=False):
     #arg: vertical array of solution
-    n = len(vert) -2 #number of matrix operations
-    u = np.zeros(n+2) #first and last value must remain zero, dirichlet BC
-    d = np.zeros(n); d[0] = 2.#array of diagonals
+    n = len(y)#number of matrix operations
+    u = np.zeros(n) #first and last value must remain zero, dirichlet BC
     #forward substitution
     for i in range(1,n): #do not change vert[0] and vert[1]
-        k = -(i)/float(d[i-1]) #1flop
-        vert[i] -= k*vert[i-1] #2flop
-        d[i] = -(i+1)/float(i) #(2flops)
+        y[i] += (i-1)*y[i-1]/float(i) #2flop #y_i = y_i - (i-1)y_(i-1)/i
     #backward subtitution
-    u[n] = vert[n-1]/d[n-1]
-    for i in reversed(xrange(1,n)):
-        u[i] = (vert[i] - u[i+1])/float(d[i])
-    return u
+    u[n-1] = y[n-1]*(n-1)/float(n) # u_n = y_n/b_n 
+    for i in reversed(xrange(1,n-1)):
+        u[i-1] = (i-1)*(y[i-1] - u[i])/float(i) #u_(i-1) = (y_(i-1) - u_i)*(i-1)/i
+        
+    if test:
+        d = np.array([-(i+1)/float(i) for i in range(n)]) #array of diagonals
+        print "relative error of diagonal array in func:u_spec\n", test_diag(d)
+        return u
+    else:
+        return u
 
 def general_LU_decomp(A_matrix, vert):
+    if len(vert)>1000:
+        return np.array([False])
     #arg: matrix of linear equation, array of solution
     n = len(vert)
-    P, L, U = linalg.lu(a = A_matrix, overwrite_a = False, check_finite = True)#scipy-function
+    P, L, U = linalg.lu(a = A_matrix, overwrite_a = False, check_finite = True) #scipy-function
     # solve L*w = vert. #overwrite the array vert.
-    linalg.solve(U,vert, sym_pos=True, lower=True, overwrite_b=True)
+    w = linalg.solve(U,vert, sym_pos=True, lower=True)
     # solve L*w = vert. #overwrite the array vert.
-    linalg.solve(U,vert, sym_pos=True, lower=True, overwrite_b=True)
-    return vert
+    u = linalg.solve(U,vert, sym_pos=True, lower=True)
+    return u
 
 def test_diag(d):
     #d must be 1-D array
@@ -101,7 +105,7 @@ def test_diag(d):
         exact[i] = - float(i+2)/float(i+1)
     return abs((d-exact)/exact)
 
-x0=0.0; x1=1.0; h=(x1-x0)/(n-1.0)
+x0=0.0; x1=1.0; h=(x1-x0)/(n+1.0)
 #vectors of tridiagonal matrix A
 a = -1.0*np.ones(n)
 b = 2.0*np.ones(n)
@@ -115,12 +119,12 @@ u_exact = 1-(1-np.exp(-10))*x-np.exp(-10*x)
 t0 = time.clock()
 
 #general gaussian elimination of tri-diagonal matrix
-u_gen = general_tridiag(tri_bottom=a, tri_mid=b, tri_top=c, vert=y)
+u_gen = general_tridiag(a, b, c, y)
 t1 = time.clock()
 t_gen = t1 - t0
 
 #specific gaussian elimination of tri-diagonal matrix
-u_spec = specific_tridiag(vert=y)
+u_spec = specific_tridiag(y)
 t2 = time.clock()
 t_spec = t2 - t1
 
@@ -143,17 +147,34 @@ write2file("calculated arrays for u(x) for n=%d"%n, filename=datafile_u, append=
 datafile_time = curdir+"/data/dderiv_time_python_v%s_n%d.dat"%(version,n) #datafile for calculated arrays
 write2file("CPU time for the diffenrent", filename=datafile_time, append=False) #create first line of datafile
 
-#store data for u(x) for three different methods
-write2file("x, f, u_gen, u_spec, u_LU", filename=datafile_u, append=False) # create first line of datafile
-for i in range(len(x)):
-    write2file("%1.10e, %1.10e, %1.10e, %1.10e, %1.10e"%(x[i], y[i]/h/h, u_gen[i], u_spec[i], u_LU[i]),
-               filename=datafile_u,
-               append=True)
-#store data for CPU time
-datastring_base = "CPU-time for method: "
-methods = ["general_tridiagonal", "specific_tridiagonal", "LU-decomposition"]
-CPUtime = [t_gen, t_spec, t_LU]
-for i in range(len(methods)):
-    print write2file(datastring_base+"%s, %1.10e s"%(methods[i], CPUtime[i]),
-                     filename=datafile_time,
-                     append=True)
+if not u_LU.any():
+    #store data for u(x) for three different methods
+    write2file("x, f, u_gen, u_spec", filename=datafile_u, append=False) # create first line of datafile
+    for i in range(len(x)):
+        write2file("%1.10e, %1.10e, %1.10e, %1.10e"%(x[i], -y[i]/h/h, u_gen[i], u_spec[i]),
+                   filename=datafile_u,
+                   append=True)
+    #store data for CPU time
+    datastring_base = "CPU-time for method: "
+    methods = ["general_tridiagonal", "specific_tridiagonal"]
+    CPUtime = [t_gen, t_spec]
+    for i in range(len(methods)):
+        print write2file(datastring_base+"%s, %1.10e s"%(methods[i], CPUtime[i]),
+                         filename=datafile_time,
+                         append=True)
+
+else:
+    #store data for u(x) for three different methods
+    write2file("x, f, u_gen, u_spec, u_LU", filename=datafile_u, append=False) # create first line of datafile
+    for i in range(len(x)):
+        write2file("%1.10e, %1.10e, %1.10e, %1.10e, %1.10e"%(x[i], -y[i]/h/h, u_gen[i], u_spec[i], u_LU[i]),
+                   filename=datafile_u,
+                   append=True)
+    #store data for CPU time
+    datastring_base = "CPU-time for method: "
+    methods = ["general_tridiagonal", "specific_tridiagonal", "LU-decomposition"]
+    CPUtime = [t_gen, t_spec, t_LU]
+    for i in range(len(methods)):
+        print write2file(datastring_base+"%s, %1.10e s"%(methods[i], CPUtime[i]),
+                         filename=datafile_time,
+                         append=True)
