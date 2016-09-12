@@ -143,16 +143,7 @@ def epsilon_plots(n_range=[10,100,1000]):
         x = pyl.array(data_dict["n=%d"%n]["x"])
         u = u_exact(x) #+1.0 #add one to avoid divide-by-zero
         v = pyl.array(data_dict["n=%d"%n]["u_gen"]) #+1.0 #add one to avoid divide-by-zero
-        #print max(v), min(v)
-        #print max(v), min(v)
-        #print abs((max(v)-max(u))/max(u)), abs((min(v)-min(u))/min(u))
-        eps = pyl.zeros(len(v)) #eps = pyl.log10(abs((v-u)/u))
-        for j in range(len(eps)):
-            eps[j] = pyl.log10(abs((v[j]-u[j])/u[j]))
-            print abs((v[j]-u[j])/u[j])
-            print u[j]                      
-            print eps[j]
-            print " "
+        eps = pyl.log10(abs((v-u)/u))
         eps_max[i] = max(eps)
         sys.exit()
         h[i] = pyl.log10(1.0/(n+1))
@@ -169,9 +160,9 @@ def epsilon_plots(n_range=[10,100,1000]):
     pyl.savefig(curdir+"/img/epsilon.png")
 
 #make plots
-compare_methods(n=1000)
-#pyl.show()
-compare_approx_n(approx_string="general")
+#compare_methods(n=1000)
+#compare_approx_n(approx_string="general")
 compare_approx_n(approx_string="specific")
-epsilon_plots()
+pyl.show()
+#epsilon_plots()
 #pyl.show()

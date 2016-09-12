@@ -66,24 +66,19 @@ def general_tridiag(a, b, c, y):
         u[i] = (y[i] - u[i+1]*c[i])/float(b[i])
     return u
 
-def specific_tridiag(y, test=False):
-    #arg: vertical array of solution
-    n = len(y)#number of matrix operations
+def specific_tridiag(y):
+    #args: arrays for tridiagonal matrix (below, on and above), array for vertical solution
+    n = len(y) #number of matrix operations
     u = np.zeros(n) #first and last value must remain zero, dirichlet BC
+    d = np.array([(i+1)/float(i) for i in range(1,n)])
     #forward substitution
-    for i in range(1,n): #do not change vert[0] and vert[1]
-        y[i] += (i-1)*y[i-1]/float(i) #2flop #y_i = y_i - (i-1)y_(i-1)/i
+    for i in range(1,n-1): #do not change vert[0] and vert[1]
+        y[i] = y[i] - y[i-1]/float(d[i-1])
     #backward subtitution
-    u[n-1] = y[n-1]*(n-1)/float(n) # u_n = y_n/b_n 
-    for i in reversed(xrange(1,n-1)):
-        u[i-1] = (i-1)*(y[i-1] - u[i])/float(i) #u_(i-1) = (y_(i-1) - u_i)*(i-1)/i
-        
-    if test:
-        d = np.array([-(i+1)/float(i) for i in range(n)]) #array of diagonals
-        print "relative error of diagonal array in func:u_spec\n", test_diag(d)
-        return u
-    else:
-        return u
+    u[n-2] = y[n-2]/d[n-2] #second to last array-element
+    for i in reversed(xrange(1,n-2)):
+        u[i] = (y[i] + u[i+1])/float(d[i])
+    return u
 
 def general_LU_decomp(A_matrix, vert):
     if len(vert)>1000:
@@ -126,7 +121,10 @@ t1 = time.clock()
 t_gen = t1 - t0
 
 #specific gaussian elimination of tri-diagonal matrix
-u_spec = specific_tridiag(y)
+u_spec = specific_tridiag_3(y)
+pl.plot(x,u_spec, x, u_gen)
+pl.show()
+sys.exit()
 t2 = time.clock()
 t_spec = t2 - t1
 
