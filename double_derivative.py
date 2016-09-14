@@ -121,10 +121,7 @@ t1 = time.clock()
 t_gen = t1 - t0
 
 #specific gaussian elimination of tri-diagonal matrix
-u_spec = specific_tridiag_3(y)
-pl.plot(x,u_spec, x, u_gen)
-pl.show()
-sys.exit()
+u_spec = specific_tridiag(y)
 t2 = time.clock()
 t_spec = t2 - t1
 
