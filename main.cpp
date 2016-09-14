@@ -5,7 +5,9 @@
 using namespace std;
 using namespace arma;
 
-void general_tridiag(vec &a, vec &b, vec &c, vec &y)
+void general_tridiag(vec &a, vec &b, vec &c, vec &y);
+void specific_tridiag(vec &arg_y);
+void LU_decomp(mat &arg_A);
 
 int main(int argc, char *argv[]){
     cout << "Armadillo version: " << arma_version::as_string() << endl;
@@ -38,10 +40,12 @@ int main(int argc, char *argv[]){
 }
 
 void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y){
-    n = len(y);
-    u = 0;
 }
-
+void specific_tridiag(vec &arg_y){
+}
+void LU_decomp(mat &arg_A){
+}
+/*
 x0=0.0; x1=1.0; h=(x1-x0)/(n+1.0)
 #vectors of tridiagonal matrix A
 a = -1.0*np.ones(n)
@@ -69,3 +73,4 @@ t_spec = t2 - t1
 u_LU = general_LU_decomp(A_matrix=A, vert=y)
 t3 = time.clock()
 t_LU = t3 - t2
+*/
