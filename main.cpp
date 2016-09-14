@@ -28,20 +28,44 @@ int main(int argc, char *argv[]){
     vec y = h*h*f
     
     //generate diagonal vector elements
-    vec a = ones<vec>(n); a *= -1.0;
+    vec a = ones<vec>(n-1); a *= -1.0;
     vec b = ones<vec>(n); b *= 2.0;
-    vec c = ones<vec>(n); c *= -1.0;
+    vec c = ones<vec>(n-1); c *= -1.0;
     mat A = eye<mat>(n); A *= 2.0;
-    for (i=0; i<n-1; i++){
+    for (int i=0; i<n-1; i++){
       A[i,i+1] = -1.0;
       A[i+1,i] = -1.0;
     } //filling A elementwise
    
 }
 
-void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y){
+void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y, int n){
+    vec u = zeros<vec>(n);
+
+    for (int i=0; i<n-1; i++){
+        k = arg_a[i]/arg_b[i];
+        arg_b[i+1] -= k*arg_c[i];
+        arg_y[i+1] -= k*arg_y[i];
+    }
+    for (int i=n-1; i>=0; i--){
+        u[i] = (arg_y[i] - u[i+1]*arg_c[i])/arg_b[i];
+    }
+    return u
 }
-void specific_tridiag(vec &arg_y){
+void specific_tridiag(vec &arg_y, int n){
+    vec u = zeros<vec>(n);
+    vec d = zeros<vec>(n-2);
+
+    for (int i=1; i<=n-1; i++){
+        d[i-1] = (i+1)/i;
+    }
+    for (int i=1; i<=n-1; i++){
+        arg_y[i] -= arg_y[i-1]/d[i-1]
+    }
+    for (int i=n-1; i>=1; i--){
+        u[i] = (arg_y[i] + u[i+1])/d[i]
+    }
+    return u
 }
 void LU_decomp(mat &arg_A){
 }
