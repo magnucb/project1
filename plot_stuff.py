@@ -141,11 +141,13 @@ def epsilon_plots(n_range=[10,100,1000]):
     h = pyl.zeros(len(n_range))
     for i, n in enumerate(n_range):
         x = pyl.array(data_dict["n=%d"%n]["x"])
-        u = u_exact(x) #+1.0 #add one to avoid divide-by-zero
-        v = pyl.array(data_dict["n=%d"%n]["u_gen"]) #+1.0 #add one to avoid divide-by-zero
+        u = u_exact(x) 
+        v = pyl.array(data_dict["n=%d"%n]["u_gen"])
+        #remove edges of u and v to avoid 'divide-by-zero'
+        u = u[1:-1]; v = v[1:-1]
         eps = pyl.log10(abs((v-u)/u))
         eps_max[i] = max(eps)
-        sys.exit()
+        #sys.exit()
         h[i] = pyl.log10(1.0/(n+1))
     pyl.figure("epsilon")
     pyl.grid(True)
@@ -154,8 +156,6 @@ def epsilon_plots(n_range=[10,100,1000]):
     pyl.ylabel(r"$\epsilon = \log_{10}\left(\frac{u_{approx}-e_{exact}}{u_{exact}}\right)$")
     pyl.title("log-plot of epsilon against step-length h")
     pyl.plot(h, eps_max, 'ko')
-    print h
-    print eps_max
     pyl.legend(loc='best')
     pyl.savefig(curdir+"/img/epsilon.png")
 
