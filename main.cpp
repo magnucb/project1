@@ -2,6 +2,7 @@
 #include <armadillo>
 #include <math.h> //delete if arma can handle exp
 #include <time.h>
+#include <string>
 
 using namespace std;
 using namespace arma;
