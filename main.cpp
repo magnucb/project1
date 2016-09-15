@@ -66,14 +66,14 @@ int main(int argc, char *argv[]){
     }  //calculating f elementwise
     vec y = h*h*f;
     
-    //generate diagonal vector elements
+    //generate diagonal vector elements and matrix
     vec a = ones<vec>(n-1); a *= -1.0;
     vec b = ones<vec>(n); b *= 2.0;
     vec c = ones<vec>(n-1); c *= -1.0;
-    mat A = <mat>(n); A.eye(); A *= 2.0;
+    mat A (n,n, fill::eye); A *= 2.0;
     for (int i=0; i<n-1; i++){
-      A[i,i+1] = -1.0;
-      A[i+1,i] = -1.0;
+      A(i,i+1) = -1.0;
+      A(i+1,i) = -1.0;
     } //filling A elementwise
 
     //generate vectors for u
@@ -101,11 +101,11 @@ int main(int argc, char *argv[]){
     
     if (not LU) {
       /*calculate u using the general tridiagonal method*/
-      //u_gen = general_tridiag(a, b, c, y)
+      general_tridiag(a, b, c, u_gen, y, n); //turns empty array u_gen into solution
       t1 = clock();
       t_gen = (t1 - t0)/CLOCKS_PER_SEC;
       /*calculate u using the specific tridiagonal method*/
-      //u_spec = specific_tridiag(y)
+      specific_tridiag(u_spec, y, n); //turns empty array u_spec into solution
       t2 = clock();
       t_spec = (t2 - t1)/CLOCKS_PER_SEC;
       //write timing-results to file
@@ -113,7 +113,7 @@ int main(int argc, char *argv[]){
     }
     else {
       /*calculate u using LU-decomposition*/
-      u_LU = LU_decomp(arg_A=A, vert=y)
+      LU_decomp(A, u_LU, y); // turns empty array U_LU into solution
       t3 = clock();
       t_LU = (t3 - t0)/CLOCKS_PER_SEC;
       //write timing results to file
@@ -122,8 +122,7 @@ int main(int argc, char *argv[]){
 
 }
 
-void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y, int n){
-    vec u = zeros<vec>(n);
+void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n){
     double k;
 
     for (int i=0; i<n-1; i++){
@@ -132,24 +131,21 @@ void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y, int n){
         arg_y[i+1] -= k*arg_y[i];
     }
     for (int i=n-1; i>=0; i--){
-        u[i] = (arg_y[i] - u[i+1]*arg_c[i])/arg_b[i];
+        arg_u[i] = (arg_y[i] - arg_u[i+1]*arg_c[i])/arg_b[i];
     }
-    return u
 }
-void specific_tridiag(vec &arg_y, int n){
-    vec u = zeros<vec>(n);
+void specific_tridiag(vec &arg_u, vec &arg_y, int n){
     vec d = zeros<vec>(n-2);
 
     for (int i=1; i<=n-1; i++){
         d[i-1] = (i+1)/i;
     }
     for (int i=1; i<=n-1; i++){
-        arg_y[i] -= arg_y[i-1]/d[i-1]
+        arg_y[i] -= arg_y[i-1]/d[i-1];
     }
     for (int i=n-1; i>=1; i--){
-        u[i] = (arg_y[i] + u[i+1])/d[i]
+        arg_u[i] = (arg_y[i] + arg_u[i+1])/d[i];
     }
-    return u
 }
 void LU_decomp(mat &arg_A){
 }
@@ -162,26 +158,26 @@ int writestring2file (char *arg_filename[],
      then add endline and close file.
      This is slow and unefficient, but not more is needed.
   */
-  if (delete_file) {
+  if (arg_delete_file) {
     /*delete preexisting file and exit*/
-    if( std::remove( filename ) == 0 ) {
+    if( std::remove( arg_filename ) == 0 ) {
       std::cout << "one file successfully deleted:" << std::endl
-		<< "\t" << filename << std::endl;
+        << "\t" << arg_filename << std::endl;
       return 0;
     } //if removed succesfully
     else {
       std::cout << "could not delete file:" << std::endl
-		<< "\t" << filename << std::endl;
+        << "\t" << arg_filename << std::endl;
       return 0;
     } //else not removed succesfully
   } //if boolean 'delete_file'
   
   std::ofstream outfile;
-  outfile.open(filename, std::ios::app); 
-  outfile << outstring << std::endl;
+  outfile.open(arg_filename, std::ios::app);
+  outfile << arg_outstring << std::endl;
   outfile.close();
   std::cout << "wrote string to: " << std::endl
-	    << "\t" << filename << std::endl;
+        << "\t" << arg_filename << std::endl;
   return 0;
 } // writestring2file
 
@@ -192,11 +188,11 @@ int write3vars2file (char *arg_filename[],
   /* Open a file and append three variables to it,
      using the csv-format.*/
   std::ofstream outfile;
-  outfile.open(filename, std::ios::app); 
+  outfile.open(arg_filename, std::ios::app);
   outfile << std::scientific << std::setprecision(20)
-	  << a << ", "
-	  << b << ", "
-	  << c << std::endl;
+      << arg_a << ", "
+      << arg_b << ", "
+      << arg_c << std::endl;
   outfile.close();
   /*std::cout << "writing skalars to file: " << std::endl
     << "\t" << filename << std::endl;*/
