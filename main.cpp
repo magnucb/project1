@@ -24,7 +24,7 @@ int main(int argc, char *argv[]){
 	 << endl;
     /* int version = atoi(argv[1]) */;
     //find cmd-line args
-    int n; bool LU
+    int n; bool LU;
     if (argc == 1){
       n = 5;
       LU = false;
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]){
     vec f = zeros<vec>(n);
     vec f1 = zeros<vec>(n);
     f = 100.0*exp(-10.0*x); //using armadillo
-    for (i=0; i<n; i++){
+    for (int i=0; i<n; i++){
       f1[i] = 100.0*exp(-10.0*x[i]);
     }  //calculating f elementwise
     vec y = h*h*f;
@@ -70,7 +70,7 @@ int main(int argc, char *argv[]){
     vec a = ones<vec>(n-1); a *= -1.0;
     vec b = ones<vec>(n); b *= 2.0;
     vec c = ones<vec>(n-1); c *= -1.0;
-    mat A = eye<mat>(n); A *= 2.0;
+    mat A = <mat>(n); A.eye(); A *= 2.0;
     for (int i=0; i<n-1; i++){
       A[i,i+1] = -1.0;
       A[i+1,i] = -1.0;
@@ -85,8 +85,8 @@ int main(int argc, char *argv[]){
     //writestring2file(data_loc, "", 1); //make sure file is deleted
     //writestring2file(data_loc, title, 0); //make new file with new 'title' as first line"
     //writestring2file(data_loc, "h, f2c, f3c", 0);
-    char *time_filename[];
-    char *u_filename[];
+    string time_filename;
+    string u_filename;
     if (not LU) {
       time_filename = "dderiv_time_c++_nSOMETHING_GS.dat";
       u_filename = "dderiv_u_c++_nSOMETHING_GS.dat";
@@ -103,19 +103,19 @@ int main(int argc, char *argv[]){
       /*calculate u using the general tridiagonal method*/
       //u_gen = general_tridiag(a, b, c, y)
       t1 = clock();
-      t_gen = (t1 - t0)/CLOCKS_PER_SEC();
+      t_gen = (t1 - t0)/CLOCKS_PER_SEC;
       /*calculate u using the specific tridiagonal method*/
       //u_spec = specific_tridiag(y)
       t2 = clock();
-      t_spec = (t2 - t1)/CLOCKS_PER_SEC();
+      t_spec = (t2 - t1)/CLOCKS_PER_SEC;
       //write timing-results to file
       //write u(x) to file
     }
     else {
       /*calculate u using LU-decomposition*/
-      u_LU = general_LU_decomp(A_matrix=A, vert=y)
+      u_LU = LU_decomp(arg_A=A, vert=y)
       t3 = clock();
-      t_LU = (t3 - t0)/CLOCKS_PER_SEC();
+      t_LU = (t3 - t0)/CLOCKS_PER_SEC;
       //write timing results to file
       //write u(x) to file
     }
@@ -124,6 +124,7 @@ int main(int argc, char *argv[]){
 
 void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_y, int n){
     vec u = zeros<vec>(n);
+    double k;
 
     for (int i=0; i<n-1; i++){
         k = arg_a[i]/arg_b[i];
@@ -182,7 +183,7 @@ int writestring2file (char *arg_filename[],
   std::cout << "wrote string to: " << std::endl
 	    << "\t" << filename << std::endl;
   return 0;
-} // write2file
+} // writestring2file
 
 int write3vars2file (char *arg_filename[],
 		     double *arg_a,
