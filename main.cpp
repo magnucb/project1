@@ -152,6 +152,9 @@ void specific_tridiag(vec &arg_y, int n){
     return u
 }
 void LU_decomp(mat &arg_A){
+    vec w = zeros<vec>(n);
+    vec y = zeros<vec>(n);
+    vec x = zeros<vec>(n);
 }
 
 int writestring2file (char *arg_filename[],
