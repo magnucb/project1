@@ -102,7 +102,7 @@ int main(int argc, char *argv[]){
       t1 = clock();
       t_gen = (t1 - t0)/CLOCKS_PER_SEC;
       /*calculate u using the specific tridiagonal method*/
-      specific_tridiag(u_spec, y, n); //turns empty array u_spec into solution
+      specific_tridiag(u_spec, u_spec, y, n); //turns empty array u_spec into solution
       t2 = clock();
       t_spec = (t2 - t1)/CLOCKS_PER_SEC;
       //write timing-results to file
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]){
     }
     else {
       /*calculate u using LU-decomposition*/
-      LU_decomp(A, u_LU, y); // turns empty array U_LU into solution
+      LU_decomp(A, u_LU); // turns empty array U_LU into solution
       t3 = clock();
       t_LU = (t3 - t0)/CLOCKS_PER_SEC;
       //write timing results to file
@@ -150,8 +150,8 @@ void LU_decomp(mat &arg_A, vec &arg_y){
     */
     mat L,U(size(arg_A)); //initialize the matrices required for LU-decomp.
     lu(L,U, arg_A); //calculate lower and upper triangular matrices from A
-    solve(L,arg_u); //solve L*w = y for w (where w is stored in the y-array)
-    solve(U,arg_u); //solve U*u = w (where u is stored in the w-array(which is stored in the y-array))
+    solve(L, arg_y); //solve L*w = y for w (where w is stored in the y-array)
+    solve(U, arg_y); //solve U*u = w (where u is stored in the w-array(which is stored in the y-array))
     //array of argument 'arg_y' has now become the solution u of 'A*u = y'
 }
 
