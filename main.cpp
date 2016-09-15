@@ -85,15 +85,15 @@ int main(int argc, char *argv[]){
     //writestring2file(data_loc, "", 1); //make sure file is deleted
     //writestring2file(data_loc, title, 0); //make new file with new 'title' as first line"
     //writestring2file(data_loc, "h, f2c, f3c", 0);
-    string prename
+    string prename;
     string u_filename; string time_filename; //filenames of two datafiles
-    if (not LU) {
-      time_filename = "dderiv_time_c++_n" + "_GS.dat";
-      u_filename = "dderiv_u_c++_n" + "_GS.dat";
+    if (LU) {
+        time_filename = "dderiv_time_c++_nSOMETHING_LU.dat";
+        u_filename = "dderiv_u_c++_nSOMETHING_LU.dat";
     }
     else {
-      time_filename = "dderiv_time_c++_nSOMETHING_LU.dat";
-      u_filename = "dderiv_u_c++_nSOMETHING_LU.dat";
+        time_filename = "dderiv_time_c++_n" + "_GS.dat";
+        u_filename = "dderiv_u_c++_n" + "_GS.dat";
     }
     
     //start exercises
@@ -119,7 +119,6 @@ int main(int argc, char *argv[]){
       //write timing results to file
       //write u(x) to file
     }
-
 }
 
 void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n){
