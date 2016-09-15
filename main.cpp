@@ -79,17 +79,17 @@ int main(int argc, char *argv[]){
     //generate vectors for u
     vec u_gen = zeros<vec>(n);
     vec u_spec = zeros<vec>(n);
-    vec u_LU = zeros<vec>(n);
+    vec u_LU = y;
 
     //allocate parameters for storing data 
     //writestring2file(data_loc, "", 1); //make sure file is deleted
     //writestring2file(data_loc, title, 0); //make new file with new 'title' as first line"
     //writestring2file(data_loc, "h, f2c, f3c", 0);
-    string time_filename;
-    string u_filename;
+    string prename
+    string u_filename; string time_filename; //filenames of two datafiles
     if (not LU) {
-      time_filename = "dderiv_time_c++_nSOMETHING_GS.dat";
-      u_filename = "dderiv_u_c++_nSOMETHING_GS.dat";
+      time_filename = "dderiv_time_c++_n" + "_GS.dat";
+      u_filename = "dderiv_u_c++_n" + "_GS.dat";
     }
     else {
       time_filename = "dderiv_time_c++_nSOMETHING_LU.dat";
@@ -147,10 +147,15 @@ void specific_tridiag(vec &arg_u, vec &arg_y, int n){
         arg_u[i] = (arg_y[i] + arg_u[i+1])/d[i];
     }
 }
-void LU_decomp(mat &arg_A){
-    vec w = zeros<vec>(n);
-    vec y = zeros<vec>(n);
-    vec x = zeros<vec>(n);
+void LU_decomp(mat &arg_A, vec &arg_y){
+    /*Solve the equation A*u = y were the matrix A
+     * is fetched as 'arg_a', and y is fetched as 'arg_y'.
+    */
+    mat L,U(size(arg_A)); //initialize the matrices required for LU-decomp.
+    lu(L,U, arg_A); //calculate lower and upper triangular matrices from A
+    solve(L,arg_u); //solve L*w = y for w (where w is stored in the y-array)
+    solve(U,arg_u); //solve U*u = w (where u is stored in the w-array(which is stored in the y-array))
+    //array of argument 'arg_y' has now become the solution u of 'A*u = y'
 }
 
 int writestring2file (char *arg_filename[],
