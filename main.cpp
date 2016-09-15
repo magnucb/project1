@@ -51,7 +51,7 @@ int main(int argc, char *argv[]){
 	   << endl;
     }
     
-    clock_t t0, t1, t2, t3, t_gen, t_spec, t_LU;
+    clock_t t_gen, t_spec, t_LU;
     
     //generate x-vector
     double x0 = 0.0;
@@ -94,33 +94,30 @@ int main(int argc, char *argv[]){
     }
     
     //start exercises
-    t0 = clock();
     
     if (not LU) {
       /*calculate u using the general tridiagonal method*/
-      general_tridiag(a, b, c, u_gen, y, n); //turns empty array u_gen into solution
-      t1 = clock();
-      t_gen = (t1 - t0)/CLOCKS_PER_SEC;
+      t_gen = general_tridiag(a, b, c, u_gen, y, n); //turns empty array u_gen into solution
+
       /*calculate u using the specific tridiagonal method*/
-      specific_tridiag(u_spec, u_spec, y, n); //turns empty array u_spec into solution
-      t2 = clock();
-      t_spec = (t2 - t1)/CLOCKS_PER_SEC;
+      t_spec = specific_tridiag(u_spec, u_spec, y, n); //turns empty array u_spec into solution
+
       //write timing-results to file
       //write u(x) to file
     }
     else {
       /*calculate u using LU-decomposition*/
-      LU_decomp(A, u_LU); // turns empty array U_LU into solution
-      t3 = clock();
-      t_LU = (t3 - t0)/CLOCKS_PER_SEC;
+      t_LU = LU_decomp(A, u_LU); // turns empty array U_LU into solution
+
       //write timing results to file
       //write u(x) to file
     }
 
 }
 
-void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n){
+double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n){
     double k;
+    clock_t t0, t1;
 
     for (int i=0; i<n-1; i++){
         k = arg_a[i]/arg_b[i];
@@ -130,8 +127,10 @@ void general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y,
     for (int i=n-1; i>=0; i--){
         arg_u[i] = (arg_y[i] - arg_u[i+1]*arg_c[i])/arg_b[i];
     }
+    return (t1 - t0)/CLOCKS_PER_SECOND
 }
-void specific_tridiag(vec &arg_u, vec &arg_y, int n){
+double specific_tridiag(vec &arg_u, vec &arg_y, int n){
+    clock_t t0,t1;
     vec d = zeros<vec>(n-2);
 
     for (int i=1; i<=n-1; i++){
@@ -143,21 +142,25 @@ void specific_tridiag(vec &arg_u, vec &arg_y, int n){
     for (int i=n-1; i>=1; i--){
         arg_u[i] = (arg_y[i] + arg_u[i+1])/d[i];
     }
+    return (t1 - t0)/CLOCKS_PER_SECOND
 }
-void LU_decomp(mat &arg_A, vec &arg_y){
+
+double LU_decomp(mat &arg_A, vec &arg_y){
     /*Solve the equation A*u = y were the matrix A
      * is fetched as 'arg_a', and y is fetched as 'arg_y'.
     */
+    clock_t t0, t1;
+
     mat L,U(size(arg_A)); //initialize the matrices required for LU-decomp.
     lu(L,U, arg_A); //calculate lower and upper triangular matrices from A
     solve(L, arg_y); //solve L*w = y for w (where w is stored in the y-array)
     solve(U, arg_y); //solve U*u = w (where u is stored in the w-array(which is stored in the y-array))
     //array of argument 'arg_y' has now become the solution u of 'A*u = y'
+
+    return (t1 - t0)/CLOCKS_PER_SECOND
 }
 
-int writestring2file (char *arg_filename[],
-		      char *arg_outstring[],
-		      bool arg_delete_file) {
+int writestring2file (char *arg_filename[], char *arg_outstring[], bool arg_delete_file) {
   /* Take one single string and add it to the 
      last line of [filename] (defined locally),
      then add endline and close file.
@@ -186,10 +189,7 @@ int writestring2file (char *arg_filename[],
   return 0;
 } // writestring2file
 
-int write3vars2file (char *arg_filename[],
-		     double *arg_a,
-		     double *arg_b,
-		     double *arg_c) {
+int write3vars2file (char *arg_filename[], double *arg_a, double *arg_b, double *arg_c) {
   /* Open a file and append three variables to it,
      using the csv-format.*/
   std::ofstream outfile;
