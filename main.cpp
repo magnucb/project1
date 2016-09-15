@@ -82,18 +82,15 @@ int main(int argc, char *argv[]){
     vec u_LU = y;
 
     //allocate parameters for storing data 
-    //writestring2file(data_loc, "", 1); //make sure file is deleted
-    //writestring2file(data_loc, title, 0); //make new file with new 'title' as first line"
-    //writestring2file(data_loc, "h, f2c, f3c", 0);
-    string prename
-    string u_filename; string time_filename; //filenames of two datafiles
-    if (not LU) {
-      time_filename = "dderiv_time_c++_n" + "_GS.dat";
-      u_filename = "dderiv_u_c++_n" + "_GS.dat";
+    string time_filename = "dderiv_time_c++_n" + to_string(n) + "_";
+    string u_filename = "dderiv_u_c++_n" + to_string(n) + "_";
+    if (LU) {
+        time_filename += "LU.dat";
+        u_filename += "LU.dat";
     }
     else {
-      time_filename = "dderiv_time_c++_nSOMETHING_LU.dat";
-      u_filename = "dderiv_u_c++_nSOMETHING_LU.dat";
+        time_filename += "tridiag.dat";
+        u_filename += "tridiag.dat";
     }
     
     //start exercises
