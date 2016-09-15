@@ -1,5 +1,4 @@
 import pylab as pyl
-import numpy as np
 import os
 import sys
 

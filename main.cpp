@@ -80,10 +80,29 @@ int main(int argc, char *argv[]){
     vec u_LU = y;
 
     //allocate parameters for storing data 
+<<<<<<< HEAD
     string time_filename = "/data/dderiv_time_c++.dat";
     string u_filename = "/data/dderiv_u_c++_n" + to_string(n) + "_";
 
     //start exercises
+=======
+<<<<<<< HEAD
+    //writestring2file(data_loc, "", 1); //make sure file is deleted
+    //writestring2file(data_loc, title, 0); //make new file with new 'title' as first line"
+    //writestring2file(data_loc, "h, f2c, f3c", 0);
+    string prename;
+    string u_filename; string time_filename; //filenames of two datafiles
+    if (LU) {
+        time_filename = "dderiv_time_c++_nSOMETHING_LU.dat";
+        u_filename = "dderiv_u_c++_nSOMETHING_LU.dat";
+    }
+    else {
+        time_filename = "dderiv_time_c++_n" + "_GS.dat";
+        u_filename = "dderiv_u_c++_n" + "_GS.dat";
+=======
+    string time_filename = "dderiv_time_c++_n" + to_string(n) + "_";
+    string u_filename = "dderiv_u_c++_n" + to_string(n) + "_";
+>>>>>>> 0a0cf71a84106276c3a5132bbc418dfc7febc889
     if (LU) {
         /*calculate u using LU-decomposition*/
         t_LU = LU_decomp(A, u_LU); // turns empty array U_LU into solution
@@ -121,6 +140,7 @@ int main(int argc, char *argv[]){
 
         //write u(x)-results to file
         u_filename += "tridiag.dat";
+<<<<<<< HEAD
         string string_u_data = "x, u_gen, u_spec";
         ofstream outfile; outfile.open(u_filename.c_str()); outfile.close();
 
@@ -131,6 +151,33 @@ int main(int argc, char *argv[]){
         }
         //TEST
         cout << "TEST:  wrote u to data file" << endl;
+=======
+>>>>>>> origin/master
+    }
+    
+    //start exercises
+    t0 = clock();
+    
+    if (not LU) {
+      /*calculate u using the general tridiagonal method*/
+      general_tridiag(a, b, c, u_gen, y, n); //turns empty array u_gen into solution
+      t1 = clock();
+      t_gen = (t1 - t0)/CLOCKS_PER_SEC;
+      /*calculate u using the specific tridiagonal method*/
+      specific_tridiag(u_spec, u_spec, y, n); //turns empty array u_spec into solution
+      t2 = clock();
+      t_spec = (t2 - t1)/CLOCKS_PER_SEC;
+      //write timing-results to file
+      //write u(x) to file
+    }
+    else {
+      /*calculate u using LU-decomposition*/
+      LU_decomp(A, u_LU); // turns empty array U_LU into solution
+      t3 = clock();
+      t_LU = (t3 - t0)/CLOCKS_PER_SEC;
+      //write timing results to file
+      //write u(x) to file
+>>>>>>> 0a0cf71a84106276c3a5132bbc418dfc7febc889
     }
 }
 
