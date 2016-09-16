@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.11)  15 SEP 2016 20:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.11)  16 SEP 2016 17:00
 entering extended mode
 **./project1.tex
 (project1.tex
@@ -769,19 +769,19 @@ File: t1cmtt.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 File: lstlang1.sty 2015/06/04 1.6 listings language file
 )
 (../plot_stuff.py
-Overfull \hbox (46.89116pt too wide) in paragraph at lines 30--31
+Overfull \hbox (46.89116pt too wide) in paragraph at lines 26--27
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
 [][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
 ][][][][][][][][][][][][] 
  []
 
-LaTeX Font Info:    Try loading font information for OMS+cmr on input line 35.
+LaTeX Font Info:    Try loading font information for OMS+cmr on input line 31.
 ("C:\Program Files (x86)\MiKTeX 2.9\tex\latex\base\omscmr.fd"
 File: omscmr.fd 2014/09/29 v2.5h Standard LaTeX font definitions
 )
 LaTeX Font Info:    Font shape `OMS/cmr/m/n' in size <9> not available
-(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 35.
+(Font)              Font shape `OMS/cmsy/m/n' tried instead on input line 31.
  [5] [6])
 Package atveryend Info: Empty hook `BeforeClearDocument' on input line 189.
 
@@ -795,9 +795,9 @@ Package rerunfilecheck Info: File `project1.out' has not changed.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 189.
  ) 
 Here is how much of TeX's memory you used:
- 10226 strings out of 493334
- 146338 string characters out of 3136669
- 296390 words of memory out of 3000000
+ 10225 strings out of 493334
+ 146328 string characters out of 3136669
+ 299390 words of memory out of 3000000
  13365 multiletter control sequences out of 15000+200000
  25564 words of font info for 73 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
@@ -825,9 +825,9 @@ blic/amsfonts/cm/cmr8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public
 msfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsf
 onts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/public/amsfont
 s/cm/cmsy9.pfb>
-Output written on project1.pdf (7 pages, 246273 bytes).
+Output written on project1.pdf (7 pages, 245917 bytes).
 PDF statistics:
- 783 PDF objects out of 1000 (max. 8388607)
- 206 named destinations out of 1000 (max. 500000)
+ 781 PDF objects out of 1000 (max. 8388607)
+ 205 named destinations out of 1000 (max. 500000)
  217 words of extra memory for PDF output out of 10000 (max. 10000000)
 

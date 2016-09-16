@@ -147,6 +147,7 @@ Through Euler's teachings on discretized numerical derivation methods, a second 
 -u''(x) = - \frac{u_{+1} + u_{i-1} - 2u_i}{h^2} = \frac{2u_i - u_{+1} - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1,...,n
 \end{align}
 \subsubsection{Results}
+
 \subsubsection{Discussion}
 
 \subsection{(b)}
