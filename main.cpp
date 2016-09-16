@@ -9,9 +9,9 @@ using namespace arma;
 
 void writestring2file(string arg_filename, string arg_outstring);
 int write3vars2file (string arg_filename, double *arg_a, double *arg_b, double *arg_c);
-double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n);
-double specific_tridiag(vec &arg_u, vec &arg_y, int n);
-double LU_decomp(mat &arg_A, vec &arg_y);
+double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int arg_n);
+double specific_tridiag(vec &arg_u, vec &arg_y, int arg_n);
+double LU_decomp(vec &arg_y, int n);
 
 int main(int argc, char *argv[]){
     cout << "Armadillo version: "
@@ -59,20 +59,12 @@ int main(int argc, char *argv[]){
     vec f = zeros<vec>(n);
     vec f1 = zeros<vec>(n);
     f = 100.0*exp(-10.0*x); //using armadillo
-    for (int i=0; i<n; i++){
-      f1(i) = 100.0*exp(-10.0*x(i));
-    }  //calculating f elementwise
     vec y = h*h*f;
 
     //generate diagonal vector elements and matrix
     vec a = ones<vec>(n-1); a *= -1.0;
     vec b = ones<vec>(n); b *= 2.0;
     vec c = ones<vec>(n-1); c *= -1.0;
-    mat A (n,n, fill::eye); A *= 2.0;
-    for (int i=0; i<n-1; i++){
-      A(i,i+1) = -1.0;
-      A(i+1,i) = -1.0;
-    } //filling A elementwise
 
     //generate vectors for u
     vec u_gen = zeros<vec>(n);
@@ -86,7 +78,7 @@ int main(int argc, char *argv[]){
     //start exercises
     if (LU) {
         /*calculate u using LU-decomposition*/
-        t_LU = LU_decomp(A, u_LU); // turns empty array U_LU into solution
+        t_LU = LU_decomp(u_LU, n); // turns empty array U_LU into solution
 
         //write timing results to file
         string string_time_data = "method: n=" + to_string(n) + " time=";
@@ -104,34 +96,36 @@ int main(int argc, char *argv[]){
         writestring2file(time_filename, "general " + string_time_data + to_string(t_gen));
         writestring2file(time_filename, "specific " + string_time_data + to_string(t_spec));
 
-        /*write u(x)-results to file*/
-        //make new data-file
-        u_filename += "tridiag.dat";
-        ofstream outfile; outfile.open(u_filename.c_str()); outfile.close();
-        cout << "Started new file to /data/-directory" << endl;
+        /*write u(x)-results to file IF n is not too large */
+        if (n <= 1e+5) {
+            //make new data-file
+            u_filename += "tridiag.dat";
+            ofstream outfile; outfile.open(u_filename.c_str()); outfile.close();
+            cout << "Started new file to /data/-directory" << endl;
 
-        //add first line
-        string string_u_data = "x, u_gen, u_spec";
-        writestring2file(u_filename, string_u_data);
-        //add all x_i, u_gen_i, u_spec_i to data-file
-        for (int i=0; i < n; i++) {
-            string_u_data = to_string(x(i)) + ", " + to_string(u_gen(i)) + ", " + to_string(u_spec(i));
+            //add first line
+            string string_u_data = "x, u_gen, u_spec";
             writestring2file(u_filename, string_u_data);
+            //add all x_i, u_gen_i, u_spec_i to data-file
+            for (int i=0; i < n; i++) {
+                string_u_data = to_string(x(i)) + ", " + to_string(u_gen(i)) + ", " + to_string(u_spec(i));
+                writestring2file(u_filename, string_u_data);
+            }
         }
     }
 }
 
-double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int n){
+double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int arg_n){
     double k;
     clock_t t0, t1;
 
     t0 = clock();
-    for (int i=0; i<n-1; i++){
+    for (int i=0; i<arg_n-1; i++){
         k = arg_a(i)/( (double) arg_b(i) );
         arg_b(i+1) -= k*arg_c(i);
         arg_y(i+1) -= k*arg_y(i);
     }
-    for (int i=n-2; i>0; i--){
+    for (int i=arg_n-2; i>0; i--){
         arg_u(i) = (arg_y(i) - arg_u(i+1)*arg_c(i))/( (double) arg_b(i) );
     }
     t1 = clock();
@@ -139,17 +133,17 @@ double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_
     return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
 }
 
-double specific_tridiag(vec &arg_u, vec &arg_y, int n){
+double specific_tridiag(vec &arg_u, vec &arg_y, int arg_r){
     clock_t t0,t1;
-    vec d = zeros<vec>(n);
+    vec d = zeros<vec>(arg_r);
 
     t0 = clock();
-    for (int i=1; i<=n-1; i++){
+    for (int i=1; i<=arg_r-1; i++){
         d(i-1) = (i+1)/( (double) i );
         arg_y(i) -= arg_y(i-1)/d(i-1);
     }
 
-    for (int i=n-2; i>=1; i--){
+    for (int i=arg_r-2; i>=1; i--){
         arg_u(i) = (arg_y(i) + arg_u(i+1))/d(i);
     }
     t1 = clock();
@@ -157,17 +151,20 @@ double specific_tridiag(vec &arg_u, vec &arg_y, int n){
     return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
 }
 
-double LU_decomp(mat &arg_A, vec &arg_y){
+double LU_decomp(vec &arg_y, int arg_n){
     /*Solve the equation A*u = y were the matrix A
      * is fetched as 'arg_a', and y is fetched as 'arg_y'.
     */
     clock_t t0, t1;
 
-    mat L,U(size(arg_A)); //initialize the matrices required for LU-decomp.
-    lu(L,U, arg_A); //calculate lower and upper triangular matrices from A
+    mat A (arg_n,arg_n, fill::eye); A *= 2.0;
+    for (int i=0; i<arg_n-1; i++){
+      A(i,i+1) = -1.0;
+      A(i+1,i) = -1.0;
+    } //filling A elementwise
+
     t0 = clock();
-    solve(L, arg_y); //solve L*w = y for w (where w is stored in the y-array)
-    solve(U, arg_y); //solve U*u = w (where u is stored in the w-array(which is stored in the y-array))
+    arg_y = solve(A, arg_y); //solve A*x = L*U*x = L*w = y for x
     //array of argument 'arg_y' has now become the solution u of 'A*u = y'
     t1 = clock();
 
