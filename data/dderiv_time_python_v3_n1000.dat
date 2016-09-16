@@ -1,4 +1,0 @@
-CPU time for the diffenrent
-CPU-time for method: general_tridiagonal, 8.5410000000e-03 s
-CPU-time for method: specific_tridiagonal, 8.0070000000e-03 s
-CPU-time for method: LU-decomposition, 1.1255360000e+00 s
