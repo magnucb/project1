@@ -5,3 +5,7 @@ LU method: n=10 time=0.000014
 general tridiagonal method: n=5 time=0.000014
 specific tridiagonal method: n=5 time=0.000006
 LU method: n=10 time=0.000011
+general tridiagonal method: n=5 time=0.000014
+specific tridiagonal method: n=5 time=0.000008
+general tridiagonal method: n=5 time=0.000014
+specific tridiagonal method: n=5 time=0.000010
