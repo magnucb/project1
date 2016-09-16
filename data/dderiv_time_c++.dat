@@ -1,0 +1,6 @@
+#data for CPU time in c++ programgeneraltridiagonal method: n=5 time=0.000033
+general tridiagonal method: n=5 time=0.000011
+specific tridiagonal method: n=5 time=0.000006
+LU method: n=10 time=0.000014
+general tridiagonal method: n=5 time=0.000014
+specific tridiagonal method: n=5 time=0.000006
