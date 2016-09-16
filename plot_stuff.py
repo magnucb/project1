@@ -142,11 +142,16 @@ def epsilon_plots(n_range=[10,100,1000]):
         x = pyl.array(data_dict["n=%d"%n]["x"])
         u = u_exact(x) 
         v = pyl.array(data_dict["n=%d"%n]["u_gen"])
-        #remove edges of u and v to avoid 'divide-by-zero'
-        u = u[1:-1]; v = v[1:-1]
-        eps = pyl.log10(abs((v-u)/u))
-        eps_max[i] = max(eps)
-        #sys.exit()
+        #calculate eps_max by finding max of |v_i - u_i|
+        max_diff_uv = 0; jmax = 0;
+        for j in range(n):
+            diff_uv = abs(v[j]-u[j])
+            if diff_uv > max_diff_uv:
+                max_diff_uv = diff_uv
+                jmax = j
+        if jmax == 0 or jmax == n-1:
+            sys.exit("There is an error in calculating the max_epsilon")
+        eps_max[i] = pyl.log10(max_diff_uv/float(abs(u[jmax])))
         h[i] = pyl.log10(1.0/(n+1))
     pyl.figure("epsilon")
     pyl.grid(True)
