@@ -8,7 +8,6 @@ using namespace std;
 using namespace arma;
 
 void writestring2file(string arg_filename, string arg_outstring);
-int write3vars2file (string arg_filename, double *arg_a, double *arg_b, double *arg_c);
 double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_y, int arg_n);
 double specific_tridiag(vec &arg_u, vec &arg_y, int arg_n);
 double LU_decomp(vec &arg_y, int n);
