@@ -21,9 +21,10 @@ if cmdarg == "new_time":
 n_range_LU = np.logspace(1,3,num=3)
 for n in n_range_LU:
     os.system("./../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Release/project1 %d 1"%n)
+    os.system("./../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Release/project1 %d "%int(n))
     
 #run tridiag methods for n = logspace(10,10000,some number of variable)
-n_range_tridiag = np.logspace(1, 4,num=7)
+n_range_tridiag = np.logspace(1, 4, num=7)
 for n in n_range_tridiag:
     os.system("./../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Release/project1 %d "%int(n))
 
