@@ -131,9 +131,14 @@ double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_
         arg_b(i+1) -= k*arg_c(i);
         arg_y(i+1) -= k*arg_y(i);
     }
-    for (int i=n-2; i>=0; i--){
+    cout << "general tridiag:" << endl;
+    for (int i=n-2; i>0; i--){
         arg_u(i) = (arg_y(i) - arg_u(i+1)*arg_c(i))/( (double) arg_b(i) );
+        cout << "i=" << i << endl
+             << "y=" << arg_y(i) << endl
+             << "b=" << arg_b(i) << endl;
     }
+    arg_u.print("general tridiag: vec{u]="); exit(1);
     t1 = clock();
 
     return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
