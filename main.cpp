@@ -55,10 +55,9 @@ int main(int argc, char *argv[]){
     double x1 = 1.0;
     double h = (x1 - x0)/(n+1.0);
     vec x = linspace<vec>(x0,x1,n);
-    vec f = zeros<vec>(n);
-    vec f1 = zeros<vec>(n);
-    f = 100.0*exp(-10.0*x); //using armadillo
-    vec y = h*h*f;
+    vec y1 = zeros<vec>(n); // y = h^2 * f = h^2*100*e^(-10*x)
+    y1 = h*h*100.0*exp(-10.0*x);
+    vec y2 = y1; //need to arrays since they will be overridden
 
     //generate diagonal vector elements and matrix
     vec a = ones<vec>(n-1); a *= -1.0;
@@ -68,7 +67,7 @@ int main(int argc, char *argv[]){
     //generate vectors for u
     vec u_gen = zeros<vec>(n);
     vec u_spec = zeros<vec>(n);
-    vec u_LU = y;
+    vec u_LU = y1; //starts out as y1, will be overridden
 
     //allocate parameters for storing data
     string time_filename = "../project1/data/dderiv_time_c++.dat";
@@ -85,10 +84,10 @@ int main(int argc, char *argv[]){
 
     } else {
         /*calculate u using the general tridiagonal method*/
-        t_gen = general_tridiag(a, b, c, u_gen, y, n); //turns empty array u_gen into solution
+        t_gen = general_tridiag(a, b, c, u_gen, y1, n); //turns empty array u_gen into solution
 
         /*calculate u using the specific tridiagonal method*/
-        t_spec = specific_tridiag(u_spec, y, n); //turns empty array u_spec into solution
+        t_spec = specific_tridiag(u_spec, y2, n); //turns empty array u_spec into solution
 
         //write timing-results to file
         string string_time_data = "tridiagonal method: n=" + to_string(n) + " time=";
@@ -96,7 +95,7 @@ int main(int argc, char *argv[]){
         writestring2file(time_filename, "specific " + string_time_data + to_string(t_spec));
 
         /*write u(x)-results to file IF n is not too large */
-        if (n <= 1e+5) {
+        if (n <= 1e+4) {
             //make new data-file
             u_filename += "tridiag.dat";
             ofstream outfile; outfile.open(u_filename.c_str()); outfile.close();

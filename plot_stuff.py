@@ -3,33 +3,29 @@ import os
 import sys
 
 curdir = os.getcwd()
-version = 3
-data_dict = {}
-column_dict = {}
-n_range = [10,100,1000]
+data_dict = {} #dictionary of files
+n_range = [10,100,1000, 10000]
 
 for n in n_range:
     #loop through different n's
-    with open(curdir+"/data/dderiv_u_python_v%s_n%d.dat"%(version,n), 'r') as infile:
+    with open(curdir+"/data/dderiv_u_c++_n%d_tridiag.dat"%(n), 'r') as infile:
         full_file = infile.read() #read entire file into text
         lines = full_file.split('\n') #separate by EOL-characters
         lines = lines[:-1] #remove last line (empty line)
-        keys = lines.pop(0).split(', ') #use top line as keys for dict.
+        keys = lines.pop(0).split(', ') #use top line as keys for dictionary
         dict_of_content = {}
-        for i,key in zip(range(len(keys)), keys):
-            #loop over keys: h, f2c, f3c
-            dict_of_content[key] = []
-            for j in range(len(lines)):
-                # loop over all lines
-                line = lines[j].split(', ')
-                word = line[i]
+        for i,key in zip(range(len(keys)), keys): #loop over keys, create approp. arrays
+            dict_of_content[key] = [] #empty list
+            for j in range(len(lines)): #loop though the remaining lines of the data-set
+                line = lines[j].split(', ') #split the line into string-lists
+                word = line[i] # append the correct value to the correct list with the correct key
                 try:
-                    word = float(word)
+                    word = float(word) #check if value can be float
                 except ValueError: #word cannot be turned to number
                     print word
                     sys.exit("There is something wrong with your data-file \n'%s' cannot be turned to numbers"%word)
-                dict_of_content[key].append(word)
-        data_dict["n=%d"%n] = dict_of_content
+                dict_of_content[key].append(word) 
+        data_dict["n=%d"%n] = dict_of_content #add complete dictionary to dictionary of files
 
 def u_exact(x):
     u =  1.0 - (1.0 - pyl.exp(-10.0))*x - pyl.exp(-10.0*x)
@@ -84,13 +80,12 @@ def harry_plotter():
 
 def compare_methods(n):
     """
-    For a specific length 'n' compare all three methods 
+    For a specific length 'n' compare both methods 
     with the exact function.
     """
     x = pyl.array(data_dict["n=%d"%n]["x"])
     gen = pyl.array(data_dict["n=%d"%n]["u_gen"])
     spec = pyl.array(data_dict["n=%d"%n]["u_spec"])
-    LU = pyl.array(data_dict["n=%d"%n]["u_LU"])
     exact = u_exact(x)
     pyl.figure("compare methods")
     pyl.grid(True)
@@ -102,7 +97,6 @@ def compare_methods(n):
     pyl.plot(x, exact, 'k-', label="exact")
     pyl.plot(x, gen, 'b-', label="general tridiagonal")
     pyl.plot(x, spec, 'g-', label="specific tridiagonal")
-    pyl.plot(x, LU, 'r-', label="LU-decomp.")
     pyl.legend(loc='best', prop={'size':9})
     pyl.savefig(curdir+"/img/compare_methods_n%d.png"%n)
                
@@ -164,9 +158,9 @@ def epsilon_plots(n_range=[10,100,1000]):
     pyl.savefig(curdir+"/img/epsilon.png")
 
 #make plots
-#compare_methods(n=1000)
+compare_methods(n=1000)
 #compare_approx_n(approx_string="general")
-compare_approx_n(approx_string="specific")
+#compare_approx_n(approx_string="specific")
 pyl.show()
 #epsilon_plots()
 #pyl.show()

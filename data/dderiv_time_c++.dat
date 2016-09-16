@@ -36,3 +36,29 @@ general tridiagonal method: n=1000000 time=0.234923
 specific tridiagonal method: n=1000000 time=0.168040
 general tridiagonal method: n=10000000 time=2.371182
 specific tridiagonal method: n=10000000 time=1.652033
+general tridiagonal method: n=5 time=0.000019
+specific tridiagonal method: n=5 time=0.000014
+general tridiagonal method: n=10 time=0.000014
+specific tridiagonal method: n=10 time=0.000009
+general tridiagonal method: n=100 time=0.000050
+specific tridiagonal method: n=100 time=0.000034
+general tridiagonal method: n=1000 time=0.001325
+specific tridiagonal method: n=1000 time=0.000879
+general tridiagonal method: n=10000 time=0.008369
+specific tridiagonal method: n=10000 time=0.005480
+general tridiagonal method: n=100000 time=0.097533
+specific tridiagonal method: n=100000 time=0.065525
+general tridiagonal method: n=1000000 time=0.235349
+specific tridiagonal method: n=1000000 time=0.164944
+general tridiagonal method: n=5 time=0.000027
+specific tridiagonal method: n=5 time=0.000015
+general tridiagonal method: n=1000000 time=0.235697
+specific tridiagonal method: n=1000000 time=0.164837
+general tridiagonal method: n=100000 time=0.070757
+specific tridiagonal method: n=100000 time=0.049133
+general tridiagonal method: n=10000000 time=2.349328
+specific tridiagonal method: n=10000000 time=1.647613
+LU method: n=10 time=0.397742
+LU method: n=100 time=0.039500
+LU method: n=1000 time=0.719492
+LU method: n=10000 time=355.285820
