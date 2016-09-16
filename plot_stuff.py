@@ -4,7 +4,7 @@ import sys
 
 curdir = os.getcwd()
 data_dict = {} #dictionary of files
-n_range = [10,100,1000, 10000]
+n_range = [10,50,80, 100, 500, 800, 1000, 5000, 10000]
 
 for n in n_range:
     #loop through different n's
@@ -95,7 +95,7 @@ def compare_methods(n):
     pyl.title("function u for three different methods (n=%d)"%n)
 
     pyl.plot(x, exact, 'k-', label="exact")
-    pyl.plot(x, gen, 'b-', label="general tridiagonal")
+    pyl.plot(x, gen, 'b--', label="general tridiagonal")
     pyl.plot(x, spec, 'g-', label="specific tridiagonal")
     pyl.legend(loc='best', prop={'size':9})
     pyl.savefig(curdir+"/img/compare_methods_n%d.png"%n)
@@ -158,7 +158,7 @@ def epsilon_plots(n_range=[10,100,1000]):
     pyl.savefig(curdir+"/img/epsilon.png")
 
 #make plots
-compare_methods(n=1000)
+compare_methods(n=10)
 #compare_approx_n(approx_string="general")
 #compare_approx_n(approx_string="specific")
 pyl.show()

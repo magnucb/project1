@@ -15,8 +15,7 @@ double LU_decomp(vec &arg_y, int n);
 int main(int argc, char *argv[]){
     cout << "Armadillo version: "
 	 << arma_version::as_string()
-	 << endl;
-    /* int version = atoi(argv[1]) */;
+     << endl;
     //find cmd-line args
     int n; bool LU;
     if (argc == 1){
@@ -53,16 +52,17 @@ int main(int argc, char *argv[]){
     //generate x,f,y -vectors
     double x0 = 0.0;
     double x1 = 1.0;
-    double h = (x1 - x0)/(n+1.0);
+    double h = (x1 - x0)/(n-1.0);
     vec x = linspace<vec>(x0,x1,n);
     vec y1 = zeros<vec>(n); // y = h^2 * f = h^2*100*e^(-10*x)
+    vec y2 = zeros<vec>(n);
     y1 = h*h*100.0*exp(-10.0*x);
-    vec y2 = y1; //need to arrays since they will be overridden
+    y2 = h*h*100.0*exp(-10.0*x); //need to arrays since they will be overridden
 
     //generate diagonal vector elements and matrix
-    vec a = ones<vec>(n-1); a *= -1.0;
+    vec a = ones<vec>(n); a *= -1.0;
     vec b = ones<vec>(n); b *= 2.0;
-    vec c = ones<vec>(n-1); c *= -1.0;
+    vec c = ones<vec>(n); c *= -1.0;
 
     //generate vectors for u
     vec u_gen = zeros<vec>(n);
@@ -118,12 +118,12 @@ double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_
     clock_t t0, t1;
 
     t0 = clock();
-    for (int i=0; i<arg_n-1; i++){
-        k = arg_a(i)/( (double) arg_b(i) );
+    for (int i=1; i<=arg_n-3; i++){
+        k = arg_a(i+1)/( (double) arg_b(i) );
         arg_b(i+1) -= k*arg_c(i);
         arg_y(i+1) -= k*arg_y(i);
     }
-    for (int i=arg_n-2; i>0; i--){
+    for (int i=arg_n-2; i>=1; i--){
         arg_u(i) = (arg_y(i) - arg_u(i+1)*arg_c(i))/( (double) arg_b(i) );
     }
     t1 = clock();
@@ -131,17 +131,20 @@ double general_tridiag(vec &arg_a, vec &arg_b, vec &arg_c, vec &arg_u, vec &arg_
     return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
 }
 
-double specific_tridiag(vec &arg_u, vec &arg_y, int arg_r){
+double specific_tridiag(vec &arg_u, vec &arg_y, int arg_n){
     clock_t t0,t1;
-    vec d = zeros<vec>(arg_r);
+    vec d = zeros<vec>(arg_n);
 
     t0 = clock();
-    for (int i=1; i<=arg_r-1; i++){
-        d(i-1) = (i+1)/( (double) i );
-        arg_y(i) -= arg_y(i-1)/d(i-1);
+    for (int i=1; i<=arg_n-1; i++){
+        d(i) = (i+1)/( (double) i );
     }
 
-    for (int i=arg_r-2; i>=1; i--){
+    for (int i=2; i<=arg_n-2; i++){
+        arg_y(i) += arg_y(i-1)/d(i-1);
+    }
+
+    for (int i=arg_n-2; i>=1; i--){
         arg_u(i) = (arg_y(i) + arg_u(i+1))/d(i);
     }
     t1 = clock();
