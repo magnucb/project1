@@ -62,6 +62,7 @@ LU method: n=10 time=0.397742
 LU method: n=100 time=0.039500
 LU method: n=1000 time=0.719492
 LU method: n=10000 time=355.285820
+<<<<<<< HEAD
 general tridiagonal method: n=50 time=0.000063
 specific tridiagonal method: n=50 time=0.000053
 general tridiagonal method: n=500 time=0.000273

@@ -6,13 +6,9 @@ CONFIG -= qt
 unix {
     LIBS += -lblas -llapack -larmadillo
 } else {
-    INCLUDEPATH += C:/Armadillo/include/
-    LIBS += -LC:/Armadillo/examples/lib_win64/ -lblas_win64_MT
-    LIBS += -LC:/Armadillo/examples/lib_win64/ -llapack_win64_MT
-    LIBS += -lblas_win64_MT -llapack_win64_MT -larmadillo
+LIBS += -L$$PWD/../../../../../Armadillo/ -larmadillo
+LIBS += -L$$PWD/../../../../../Armadillo/examples/lib_win64 -llapack_win64_MT -lblas_win64_MT
+INCLUDEPATH += $$PWD/../../../../../Armadillo/include
 }
-SOURCES += main.cpp
 
-DISTFILES += \
-    ../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Debug/test.txt \
-    ../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Debug/test_copy.txt
+SOURCES += main.cpp
