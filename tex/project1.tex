@@ -77,11 +77,11 @@
 
 
 
-\title{\normalsize Fys4150: Introduction to \\
+\title{\normalsize Fys4150: Computational Physics \\
 \vspace{10mm}
 \huge Project 1\\
 \vspace{10mm}
-\normalsize Due date {\bf 19.rd of September, 2016 - 23:59}}
+\normalsize Due date {\bf 19.th of September, 2016 - 23:59}}
 
 % Skriv namnet ditt her og fjern kommenteringa
 \author{Øyvind B. Svendsen, Magnus Christopher Bareid \\ un: oyvinbsv, magnucb}
@@ -107,7 +107,7 @@ into a one-dimensional form bounded by Dirichlet boundary conditions.
 \begin{align*}
 -u''(x) = f(x)
 \end{align*}
-so that discretized linear algebra may be committed unto the equation.
+so that discretized linear algebra may be committed unto the equation, yielding a number of numerical methods for aquiring the underivated function $u(x)$.
 \end{abstract}
 \begin{center}
 \line(1,0){450}
@@ -122,7 +122,7 @@ so that discretized linear algebra may be committed unto the equation.
 \subsubsection{Intro}
 The production of this document will inevitably familiarize its authors with the programming language \verb|C++|, and to this end mathematical groundwork must first be elaborated to translate a Poisson equation from continuous calculus form, into a discretized numerical form.
 
-The Poisson equation is rewritten to a simplified form, for which a real solution is given, with with we will compare our numerical approximation to the real solution.
+The Poisson equation is rewritten to a simplified form, for which a real solution is given, with wich we will compare our numerical approximation to the real solution.
 
 \subsubsection{Method}
 Reviewing the Poisson equation:
@@ -132,20 +132,75 @@ Reviewing the Poisson equation:
 r &\rightarrow x, \\
 \phi &\rightarrow u,\\
 4\pi r\rho(r) &\rightarrow f, \indent \text{which produces the simplified form}
-\end{align*}
-\begin{align*}\label{eq:1}\tag{1}
+\end{align*}\begin{align*}\label{eq:1}\tag{1}
 -u''(x) &= f(x), \indent \text{for which we assume that} \indent f(x) = 100e^{-10x}, \\
 \Rightarrow u(x) &= 1- (1-e^{-10})x - e^{-10x},\ \text{with bounds:}\ x \in [0,1],\ u(0) = u(1)= 0
 \end{align*}
+From here on and out, the methods for finding $u(x)$ numerically will be deduced.
+
 To more easily comprehend the syntax from a programming viewpoint, one may refer to the each discretized representation of $x$ and $u$; we know the span of $x$, and therefore we may divide it up into appropriate chunks. Each of these $x_i$ will yield a corresponding $u_i$.
 
-We may calculate each to each discrete $x_i$ by the form $x_i = ih$ in the interval from $x_0 = 0$ to $x_{n} = 1$ as it is linearly increasing, meaning we use $n$ points in our approximation, yielding the step length $h = 1/n$. Of course, this also yields for the discretized representation of $u(x_i) = u_i$.
-
+We may calculate each discrete $x_i$ by the form $x_i = ih$ in the interval from $x_0 = 0$ to $x_{n} = 1$ as it is linearly increasing, meaning we use $n$ points in our approximation, yielding the step length $h = 1/n$. Of course, this also yields discretized representation of $u(x_i) = u_i$.
 
 Through Euler's teachings on discretized numerical derivation methods, a second derivative may be constructed through the form of
 \begin{align}\label{eq:2}\tag{2}
--u''(x) = - \frac{u_{+1} + u_{i-1} - 2u_i}{h^2} = \frac{2u_i - u_{+1} - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1,...,n
+-u''(x) = - \frac{u_{+1} + u_{i-1} - 2u_i}{h^2} = \frac{2u_i - u_{i+1} - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1,...,n-1
 \end{align}
+The coefficients from each of these terms and their corresponding value of $u(x)$ may be represented by a tridiagonal matrix multiplication:
+\begin{align*}
+-\frac{d^2}{dx^2}u(x) = f(x) \indent \Rightarrow \indent \mathbf{\hat{A}}\mathbf{\hat{u}} = h^2\mathbf{\hat{f}} \indent \Rightarrow \indent \left(\begin{matrix}
+  2     & -1     & 0      & \dots  & \dots  & 0      \\
+ -1     &  2     & -1     & 0      &        & \vdots \\
+  0     & -1     &  2     & \ddots & \ddots & \vdots \\
+ \vdots & 0      & \ddots & \ddots & \ddots & 0      \\
+ \vdots &        & \ddots & \ddots & \ddots & -1     \\
+  0     & \dots  & \dots  & 0      & -1     & 2      \\
+\end{matrix}\right) \left(\begin{matrix}
+u_0 \\
+\vdots\\
+\vdots\\
+\vdots\\
+\vdots\\
+u_n \\
+\end{matrix}\right) = h^2\left(\begin{matrix}
+f_0 \\
+\vdots\\
+\vdots\\
+\vdots\\
+\vdots\\
+f_n \\
+\end{matrix}\right)
+\end{align*}
+The double derivation is now reduced to a discretized linear algebra  operation by way of matrix multiplication. In our case, $f(x)$ is known to us, and the only unknowns are the $u(x)$'s from $u_1 \rightarrow u_{n-1}$ as per the Dirichlet boundary conditions \hyperref[eq:1]{(1)}, which allows the use of the algorithm from equation \hyperref[eq:2]{2} in the span of $i \in \{1,n-1\}$.
+
+To further the investigation of a possible algorithm, we start by generalizing the tridiagonal matrix $\mathbf{\hat{A}}$:
+\begin{align*}
+\left(\begin{matrix}
+  b_0   & c_0    & 0      & \dots  & \dots  & 0      \\
+  a_0   & b_1    & c_1    & 0      &        & \vdots \\
+  0     & a_1    & b_2    & c_2    & \ddots & \vdots \\
+ \vdots & 0      & a_2    & b_3    & \ddots & 0      \\
+ \vdots &        & \ddots & \ddots & \ddots & c_{n-1}\\
+  0     & \dots  & \dots  & 0      & a_{n-1}& b_n    \\
+\end{matrix}\right) \left(\begin{matrix}
+u_0     \\
+u_1     \\
+\vdots  \\
+\vdots  \\
+u_{n-1} \\
+u_n     \\
+\end{matrix}\right) = h^2\left(\begin{matrix}
+f_0     \\
+f_1     \\
+\vdots  \\
+\vdots  \\
+f_{n-1} \\
+f_n     \\
+\end{matrix}\right)
+\end{align*}
+Presumably, it is already obvious that this set of equations is row-reducable, which is the next step for the algorithm. As all the $u_i$'s are mere multiplication factors in the calculation of their corresponding $f_i$, we row-reduce the combination of $\mathbf{\hat{A}}$ and $\mathbf{\hat{f}}$. The easiest way to accomplish this is to demand that 
+
+
 \subsubsection{Results}
 \subsubsection{Discussion}
 
