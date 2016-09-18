@@ -1,4 +1,4 @@
 # project1
-Project1 of FYS3150.
+Project 1 in FYS3150.
 
-More info will be posted.
+See project1.pdf for instructions to programs and results/discussion.

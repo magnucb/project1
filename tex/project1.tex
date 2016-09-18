@@ -1,4 +1,5 @@
 \documentclass[11pt,a4paper,notitlepage]{article}
+
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[english]{babel}
@@ -73,9 +74,30 @@
   showtabs=false,
   tabsize=2
 }
-	
-
-
+\lstdefinestyle{c++style}{
+  language=C++,
+  keywordstyle=\color{blue}\ttfamily,
+  stringstyle=\color{red}\ttfamily,
+  commentstyle=\color{green}\ttfamily,
+  morecomment=[l][\color{magenta}]{\#}
+  aboveskip=3mm,
+  belowskip=3mm,
+  columns=flexible,
+  basicstyle={\small\ttfamily},
+  backgroundcolor=\color{backcolour},
+  numberstyle=\tiny\color{gray},
+  basicstyle=\footnotesize,  
+  breakatwhitespace=false
+  breaklines=true,
+  captionpos=b,
+  keepspaces=true,
+  numbers=left,
+  numbersep=5pt,
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  tabsize=2
+}
 
 \title{\normalsize Fys4150: Computational Physics \\
 \vspace{10mm}
@@ -129,7 +151,9 @@ The real motivation for this project, though, is to find a viable numerical meth
 \subsubsection{Problem}
 %something something dark side about how we decompose the abstract problem into a real programmable problem
 
-\subsubsection{Method}
+\section{Method}
+\label{section:method}
+
 Reviewing the Poisson equation:
 \begin{align*}
 \nabla ^2 \Phi &= -4\pi\rho(\mathbf{r}), \ \text{which is simplified one-dimensionally by} \ \Phi(r) = \phi(r)/r \\
@@ -351,9 +375,165 @@ For this purpose, we may simply insert the values that we know each of the vecto
 	\tilde{y}_2 &= y_2 - \frac{-1}{b_1} y_1
 	\end{align*}
 \end{minipage}
+
 \begin{center}
 \line(1,0){450}
 \end{center}
+
+\section{Explanation of programs}
+\subsection{main.cpp}
+	The main-program is a \verb|c++|-program designed to take a cmd-line argument that decides the size of the array u, and a boolean argument (0 or 1 that decides wether or not the armadillo-function "solve" should be used.
+	
+	An x-array between 0 and 1 is calculated and the appropriate a,b,c,y-arrays are calcualted as well. For this program the tridiagonal elements are constantly -1, 2 and -1 while y(x) follows the function described in the introduction. \\
+	
+	If the boolean cmd-line argument is false, then the program will calculate $\vec{u}$ using the general tridiagonal method(explanation below) and store the CPU-time it takes to calculate $\vec{u}$ using this algorithm.
+	Next, $\vec{u}$ will be calculated using the specialized tridiagonal method(explanation below) and store the CPU-time it takes to calculate $\vec{u}$ using this algorithm. \\
+	Afterwards, since \verb|c++| is terrible at plotting data, all the data (CPU-time of methods, x-arrays, and u-arrays for both methods) are stored in separate files in the data-folder with the csv-format. \\
+	
+	If the boolean cmd-line argument is true, then the program will calculate $\vec{u}$ using LU-decomposition method in the armadillo-library, measure the CPU-time it takes and store this time in the time-datafile. \\
+	
+	The function 'write2file' does exactly what the name suggest, 
+	write a string to a file. The file-name is a argument to the function and the string is also a argument to the function. 
+	It is worth noting that this function will only append to the end of a file so that it does not accidentally destroy lots of data.\\
+
+	The function 'general\_tridiag' solves the equation $A\hat{x} = \hat{y}$ for $\hat{x}$ when A is a tri-diagonal matrix.
+	The tridiagonal elements are three arrays of length n that must be given to the function as arguments along with the vector y and the size of the arrays. In figure \ref{code:general_syntax} the syntax for solving $x_i$ is presented, calculating $\tilde{b_i}$ and $\tilde{y_i}$ in the forward substitution, and $u_i$ in backward substitution, according to the algorithm in section \ref{section:method}. \\
+	The comments in figure \ref{code:general_syntax} counts the number of floting point operations in each line. This ammounts to $$5 flops\times(n-3)iterations + 4 flops \times (n-2)iterations = (9n - 23) flops $$ This strange number comes from the fact that the program requires n to be at least 3, since the Dirichlet Boundary Conditions are included in the for-loops. (i.e. excluding calculation of the endpoints, leaving them to be zero according to DBC).\\
+	
+	The function 'specific\_tridiag' is an attempt at optimizing the code in 'general\_tridiag' and lowering the  number of floating point operations per for-loop. This is primarly done by inserting $-1.0$ for every tridiagonal element $a_i$ and $c_i$, and precalculating the diagonal elements $d_i$ using the formula $d_i = \frac{i+1}{i}$. \\ %TODO
+	In figure \ref{code:specific_syntax} the algorithm for an optimized, special-case of the tri-diagonal solver is included. The diagonal elements are already calculated, meaning the forward substitution only applies to $\hat{y}$. The comments counts the number of floating point operations in each iteration. $$ 2flops\times(n-3)iterations + 2flops\times(n-2)iterations = (4n - 10)flops$$ The same restraint applies to this calculation, meaning since the algorithm includes the DBC, n must be three or higher to actually compute any values for $\hat{u}$. \\
+	The function 'LU-decomp' simply solves the set of equtions by making the matrix A with armadillo-arrays and using the solve function in the armadillo-library. the function returns the CPU-time it takes to calculate $\hat{u}$
+	
+\begin{figure}
+\label{code:general_syntax}
+\lstset{style=c++style}
+\begin{lstlisting}[frame=single]
+t0 = clock();
+//forward substitution
+for (int i=1; i<=arg_n-3; i++){
+    k = arg_a(i+1)/( (double) arg_b(i) ); //1 flop
+    arg_b(i+1) -= k*arg_c(i); //2 flops
+    arg_y(i+1) -= k*arg_y(i); //2 flops
+}
+//backward substitution
+for (int i=arg_n-2; i>=1; i--){
+  	arg_u(i) = (arg_y(i) - arg_u(i+1)*arg_c(i))/( (double) arg_b(i) ); //4 flops
+}
+t1 = clock();
+return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
+\end{lstlisting}
+\caption{The syntax used in the function 'general\_tridiag' where all variables beginning with arg are function arguments.}
+\end{figure}
+	
+\begin{figure}
+\label{code:specific_syntax}
+\lstset{style=c++style}
+\begin{lstlisting}[frame=single]
+t0 = clock();
+//forward substitution
+for (int i=2; i<=arg_n-2; i++){
+	arg_y(i) += arg_y(i-1)/d(i-1); //2 flops
+}
+//backward substition
+for (int i=arg_n-2; i>=1; i--){
+    arg_u(i) = (arg_y(i) + arg_u(i+1))/d(i); //2 flops
+}
+t1 = clock();
+return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backward substitution
+\end{lstlisting}
+\caption{The syntax used in the function 'specific\_tridiag' where all variables beginning with arg are function arguments.}
+\end{figure}
+
+\subsection{make\_data.py}
+	The program performs the experiment(running 'main.cpp') for several values of n. \\
+	Firstly it calculates both tridiagonal solvers and LU-decomposition for n = 10,100,1000 in order to compare the CPU-time for the three methods. \\
+	Then it chooses a logarithmic scale of n-values between n=10 and n=10'000 in order to produce data-sets for plotting u(x) and $\epsilon$.
+
+\subsection{plot\_stuff.py}
+	This program fetches relevant data produced by 'main.cpp'/'make\_data.py' and stores these data as arrays in a nested dictionary. \\
+	Three plotting functions are defined for making appropriate plots: \\
+	'compare\_methods' plots u(x) against x for both tridiagonal solvers and the exact solution for a specific n. \\
+	'compare\_approx\_n' plots u(x) against x for several values of n for one of the tri-diagonal solvers. \\
+	'epsilon\_plots' calculates the maximum relative error and makes a log-log-plot against step-length. This done by calculating the maximum difference between $u_{exact}$ and $u_{general}$ for a series of n-values, using this difference to find the relative error $10^\epsilon = \left|\frac{v-u}{u}\right|$ for every n-value. \\
+	These functions are called to make the plots in section \ref{section:results}
+
+\section{Results}
+\label{section:results}
+	The data can be found in the data-folder on the github-repository\footnote{see section \ref{section:github}} and all the figures presented in this section can found in the img-folder in the same repository. \\
+	
+\subsection{General tridiagonal solver}
+	\begin{figure}[h!]
+		%compare general with exact for n = 10,100,1000	
+		\includegraphics[scale=0.7]{../img/compare_general_exact.png}
+		\caption{Compare calculated u(x) with exact solution of u(x) for three values of n, using the general tridiagonal solver.}
+		\label{fig:compare_gen_exact}
+	\end{figure}
+
+\subsection{CPU-time}
+	\begin{table}[h!]
+		\label{table:cpu-time}
+		\begin{tabular}{|c|c|c|c|} \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 0.000010 & 0.000006 & 0.008585 \\
+			2 & 0.000047 & 0.000007 & 0.015610 \\
+			3 & 0.000159 & 0.000123 & 0.699342 \\
+			4 & 0.001421 & 0.001749 & \\
+			5 & 0.020054 & 0.024508 & \\
+			6 & 0.056499 & 0.064189 & \\ \hline
+		\end{tabular}
+		\caption{CPU-time each methods use for calculating u(x) in seconds}
+	%\end{table}
+	%\begin{table}[h!]
+		\label{table:cpu-frequency}
+		\begin{tabular}{|c|c|c|c|} \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 1e+6 & 1.67e+6 & 1.16e+3 \\
+			2 & 2.13e+6 & 1.43e+7 & 6.40e+3 \\
+			3 & 6.29e+6 & 8.13e+6 & 1.43e+3 \\
+			4 & 7.03e+6 & 5.72e+6 & \\
+			5 & 4.99e+6 & 4.08e+6 & \\
+			6 & 1.77e+7 & 1.56e+7 & \\ \hline
+		\end{tabular}
+		\caption{Matrix size per computation time. This data was found by dividing n (in table \ref{table:cpu-time} by computational time in the same table)}
+	%\end{table}
+	%\begin{table}[h!]
+		\label{table:flops-per-sec}
+		\begin{tabular}{|c|c|c|c|} \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 9e+6 & 6.68e+6 & x $\times$ 1.16e+3 \\
+			2 & 1.92e+7 & 5.72e+7 & x $\times$ 6.4e+3 \\
+			3 & 5.66e+7 & 3.25e+7 & x $\times$ 1.43e+3 \\
+			4 & 6.33e+7 & 2.29e+7 & \\
+			5 & 4.49e+7 & 1.63e+7 & \\
+			6 & 1.59e+8 & 6.24e+7 & \\ \hline
+		\end{tabular}
+		\caption{Flops per second where found by multiplying table \ref{table:cpu-frequency} by the number of flops per iteration (9 for general and 4 for specific)}
+	\end{table}
+	
+\subsection{Relative error}
+	\begin{table}[h!]
+	\centering
+		\label{table:relerror}
+		\begin{tabular}{|c|c|c|} \hline
+			n & $\log_{10}(h)$ & $\epsilon$ \\
+			10 & -1.0414 & -1.0140 \\
+			100 & -2.0043 & -3.0709 \\	
+			1000 & -3.0004 & -5.0381 \\
+			10000 & -4.0000 & -3.9641 \\ \hline
+		\end{tabular}
+		\caption{table of epsilon-values of various step-lengths}
+	\end{table}
+	\begin{figure}[h!]
+		\label{fig:relerror}
+		\includegraphics[scale=0.7]{../img/epsilon.png}
+		\caption{log-log-plot of table \ref{table:rel_error}}
+	\end{figure}
+	
+\section{Conclusion and discussion}
+	From section \ref{section:results} it becomes clear that the numerical solvers are quite accurate for n=100 and above(h=1/99 and below). This becomes clear when one examines figure \ref{fig:compare_gen_exact} where the approximation by solver lies on top of the exact solution for n=10 and n=100. \\
+	When it comes to computing time, the LU-decomposition is much less efficient(to no surprise for anyone), however there seems to be a slight bug in the timing of specific tridiagonal solver. This method becomes SLOWER then the general solver for high values of n, opposed to the previous expectation(remember that specific solver calculates $\simeq$ 4n flops, while the general solver calculates $\simeq$ 9n flops). \\
+	By looking at table \ref{table:flops-per-sec} the number of total floating point operations per second should the same for all three methods since they are all run on the same computer, however there are discrepencies when comparing the specific and general solvers, as mentioned earlier. the number of floating point operations per iteration for the LU-decomposition can now be determined by solving for x. This factor x is 7758, 3000 and 39580 for the three recorded instances of LU-decomposition. The results are way of from eachother(hinting towards errors in the program CPU-timing or calculation), but they are all very much larger then the factors 9 and 4 in the general and specific methods. \\
+	The program was unsuccesful at storing the data for values of n larger then 1e+4, so the graph of epsilon streches over a limited span of values, however a trend still appears. As the step-length decreases the relative error also decreases (with a slope of $\epsilon = h^2$), until it hits a minimum value at $h=10^{-3}$ and starts increasing with a slope of $\epsilon = -h$ as h decreases further. \\
 
 \newpage
 \section{Appendix - Program list}
@@ -362,5 +542,7 @@ This is the code used in this assignment. Anything that was done by hand has bee
 \verb|plot_stuff.py|
 %\lstinputlisting{../plot_stuff.py}
 
+\section{Appendix - Github}
+\label{section:github}
 
 \end{document}
