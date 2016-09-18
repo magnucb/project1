@@ -54,3 +54,4 @@ tex/project1.out
 *.bak
 *.gz
 *.bak
+*.gz(busy)
