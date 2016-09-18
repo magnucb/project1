@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.11)  18 SEP 2016 22:39
+This is pdfTeX, Version 3.14159265-2.6-1.40.17 (MiKTeX 2.9) (preloaded format=pdflatex 2016.9.11)  18 SEP 2016 22:47
 entering extended mode
 **./project1.tex
 (project1.tex
@@ -814,22 +814,15 @@ Package atveryend Info: Empty hook `AfterLastShipout' on input line 301.
  (project1.aux)
 Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 301.
 Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 301.
-
-
-Package rerunfilecheck Warning: File `project1.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `project1.out':
-(rerunfilecheck)             Before: 747A8D262C330B911DAF9218CC5D0036;347
-(rerunfilecheck)             After:  553317C192FBAE2AB17216CDD0C99A0A;406.
+Package rerunfilecheck Info: File `project1.out' has not changed.
+(rerunfilecheck)             Checksum: 553317C192FBAE2AB17216CDD0C99A0A;406.
 Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 301.
  ) 
 Here is how much of TeX's memory you used:
- 10185 strings out of 493334
- 145544 string characters out of 3136669
+ 10186 strings out of 493334
+ 145555 string characters out of 3136669
  299491 words of memory out of 3000000
- 13344 multiletter control sequences out of 15000+200000
+ 13345 multiletter control sequences out of 15000+200000
  25564 words of font info for 73 fonts, out of 3000000 for 9000
  1141 hyphenation exceptions out of 8191
  42i,18n,47p,458b,1933s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -858,9 +851,9 @@ e1/public/amsfonts/cm/cmsy10.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1
 /public/amsfonts/cm/cmsy7.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/pu
 blic/amsfonts/cm/cmsy8.pfb><C:/Program Files (x86)/MiKTeX 2.9/fonts/type1/publi
 c/amsfonts/cm/cmsy9.pfb>
-Output written on project1.pdf (9 pages, 259125 bytes).
+Output written on project1.pdf (9 pages, 261054 bytes).
 PDF statistics:
- 692 PDF objects out of 1000 (max. 8388607)
+ 700 PDF objects out of 1000 (max. 8388607)
  186 named destinations out of 1000 (max. 500000)
- 41 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 49 words of extra memory for PDF output out of 10000 (max. 10000000)
 
