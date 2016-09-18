@@ -82,7 +82,7 @@ def compare_approx_n(n_range=[10,100,1000], approx_string="general"):
     exact = u_exact(x)
     pyl.plot(x, exact, '-', label="exact")
     pyl.legend(loc='best', prop={'size':9})
-    pyl.savefig(curdir+"/img/compare_%s_n_n%d.png"%(approx_string,n))
+    pyl.savefig(curdir+"/img/compare_%s_exact.png"%(approx_string))
     
 def epsilon_plots(n_range=[10,100,1000]):
     eps_max = pyl.zeros(len(n_range))
@@ -113,8 +113,8 @@ def epsilon_plots(n_range=[10,100,1000]):
     pyl.savefig(curdir+"/img/epsilon.png")
 
 #make plots
-compare_methods(n=10)
-#compare_approx_n(approx_string="general")
+#compare_methods(n=10)
+compare_approx_n(approx_string="general") #exercise b
 #compare_approx_n(approx_string="specific")
 #epsilon_plots()
 pyl.show()

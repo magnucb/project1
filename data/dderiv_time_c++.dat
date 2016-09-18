@@ -1,20 +1,24 @@
-LU method: n=10 time=0.000954
-LU method: n=100 time=0.071722
-LU method: n=1000 time=0.676308
-LU method: n=10 time=0.001838
-LU method: n=100 time=0.021105
-LU method: n=1000 time=0.689876
-general tridiagonal method: n=10 time=0.000009
-specific tridiagonal method: n=10 time=0.000006
-general tridiagonal method: n=31 time=0.000010
-specific tridiagonal method: n=31 time=0.000007
-general tridiagonal method: n=100 time=0.000032
-specific tridiagonal method: n=100 time=0.000029
-general tridiagonal method: n=316 time=0.000048
-specific tridiagonal method: n=316 time=0.000052
-general tridiagonal method: n=1000 time=0.000119
-specific tridiagonal method: n=1000 time=0.000191
-general tridiagonal method: n=3162 time=0.000298
-specific tridiagonal method: n=3162 time=0.000461
-general tridiagonal method: n=10000 time=0.001915
-specific tridiagonal method: n=10000 time=0.002550
+#data for CPU time in c++ program
+LU method: n=10 time=0.003202
+general tridiagonal method: n=10 time=0.000010
+specific tridiagonal method: n=10 time=0.000003
+LU method: n=100 time=0.102944
+general tridiagonal method: n=100 time=0.000047
+specific tridiagonal method: n=100 time=0.000039
+LU method: n=1000 time=0.666954
+general tridiagonal method: n=1000 time=0.000159
+specific tridiagonal method: n=1000 time=0.000193
+general tridiagonal method: n=10 time=0.000016
+specific tridiagonal method: n=10 time=0.000011
+general tridiagonal method: n=31 time=0.000011
+specific tridiagonal method: n=31 time=0.000009
+general tridiagonal method: n=100 time=0.000025
+specific tridiagonal method: n=100 time=0.000028
+general tridiagonal method: n=316 time=0.000076
+specific tridiagonal method: n=316 time=0.000085
+general tridiagonal method: n=1000 time=0.000157
+specific tridiagonal method: n=1000 time=0.000196
+general tridiagonal method: n=3162 time=0.000456
+specific tridiagonal method: n=3162 time=0.000564
+general tridiagonal method: n=10000 time=0.001918
+specific tridiagonal method: n=10000 time=0.002343

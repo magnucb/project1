@@ -11,11 +11,11 @@ except:
 if cmdarg == "new_time":
     #delete time-datafile and start a new
     first_line = "#data for CPU time in c++ program"
-    time_filename = "/data/dderiv_time_c++.dat"
+    time_filename = "data/dderiv_time_c++.dat"
     #os.system("rm " + time_filename)
     outfile = open(time_filename, "w")
-    outfile.write(first_line)
-    ooutfile.close()
+    outfile.write(first_line + "\n")
+    outfile.close()
 
 #run LU-decomposition for log10(n) = 1,2,3
 n_range_LU = np.logspace(1,3,num=3)
