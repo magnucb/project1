@@ -339,6 +339,20 @@ After this procedure, the tridiagonal matrix A is transformed into an uppertrian
 \end{align*}
 \end{minipage}
 
+	
+\begin{center}
+\line(1,0){450}
+\end{center}
+
+\newpage
+\section{Appendix - Github}
+\label{section:github}
+
+\end{document}
+
+
+
+
 \section{Explanation of programs}
 \subsection{main.cpp}
 	The main-program is a \verb|c++|-program designed to take a cmd-line argument that decides the size of the array u, and a boolean argument (0 or 1 that decides wether or not the armadillo-function "solve" should be used.
@@ -493,15 +507,3 @@ return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backwa
 	When it comes to computing time, the LU-decomposition is much less efficient(to no surprise for anyone), however there seems to be a slight bug in the timing of specific tridiagonal solver. This method becomes SLOWER then the general solver for high values of n, opposed to the previous expectation(remember that specific solver calculates $\simeq$ 4n flops, while the general solver calculates $\simeq$ 9n flops). \\
 	By looking at table \ref{table:flops-per-sec} the number of total floating point operations per second should the same for all three methods since they are all run on the same computer, however there are discrepencies when comparing the specific and general solvers, as mentioned earlier. the number of floating point operations per iteration for the LU-decomposition can now be determined by solving for x. This factor x is 7758, 3000 and 39580 for the three recorded instances of LU-decomposition. The results are way of from eachother(hinting towards errors in the program CPU-timing or calculation), but they are all very much larger then the factors 9 and 4 in the general and specific methods. \\
 	The program was unsuccesful at storing the data for values of n larger then 1e+4, so the graph of epsilon streches over a limited span of values, however a trend still appears. As the step-length decreases the relative error also decreases (with a slope of $\epsilon = h^2$), until it hits a minimum value at $h=10^{-3}$ and starts increasing with a slope of $\epsilon = -h$ as h decreases further. \\	
-	
-\begin{center}
-\line(1,0){450}
-\end{center}
-
-\newpage
-\section{Appendix - Github}
-\label{section:github}
-
-
-
-\end{document}
