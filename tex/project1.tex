@@ -169,7 +169,7 @@ Looking closer at the discretized problem:
 	\vdots& \\
 	i = n: \indent -u_{n+1} + 2u_n - u_{n-1} &= y_n \\
 	\intertext{By now it should be obvious to recognize that the coefficients corresponding to each of these terms and their corresponding values of $u(x)$ looks very similar to a tridiagonal matrix multiplication problem which could be represented such as this: }
--\left(\pd{}{x}\right)^2u(x) = f(x) \indent \Rightarrow \indent \mathbf{\hat{A}}\mathbf{\hat{u}} &= \mathbf{\hat{y}} \indent \Rightarrow \indent \left(\begin{matrix}
+\label{mat:1}\tag{3}-\left(\pd{}{x}\right)^2u(x) = f(x) \Rightarrow \mathbf{\hat{A}}\mathbf{\hat{u}} = \mathbf{\hat{y}} \Rightarrow  &\left(\begin{matrix}
   2     & -1     & 0      & \dots  & \dots  & 0      \\
  -1     &  2     & -1     & 0      &        & \vdots \\
   0     & -1     &  2     & \ddots & \ddots & \vdots \\
@@ -236,7 +236,7 @@ Starting the Gaussian elimination with the second row, row II, a row operation i
   \tilde{a}_2   & \tilde{b}_2    & \tilde{c}_2    & \ddots  &        & \vdots  & \tilde{y}_2  \\
   0     & a_3    & b_3    & c_3     & \ddots & \vdots  & \vdots  \\
  \vdots & \ddots & a_4    & b_4     & \ddots & 0       & \vdots  \\
- \vdots &        & \ddots & \ddots  & \ddots & c_n     & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_{n-1}     & \vdots  \\
   0     & \dots  & \dots  & 0       & a_{n}  & b_n     & y_{n}   \\
 \end{matrix}\right)
 \end{align*}
@@ -260,7 +260,7 @@ Moving on to row 3, and performing a similar operation:
   0   & \tilde{b}_2    & c_2    & \ddots  &        & \vdots  & \tilde{y}_2  \\
   0     & \tilde{a}_3    & \tilde{b}_3    & \tilde{c}_3     & \ddots & \vdots  & \tilde{y}_3  \\
  \vdots & \ddots & a_4    & b_4     & \ddots & 0       & \vdots  \\
- \vdots &        & \ddots & \ddots  & \ddots & c_n     & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_{n-1}     & \vdots  \\
   0     & \dots  & \dots  & 0       & a_{n}  & b_n     & y_{n}   \\
 \end{matrix}\right)
 \end{align*}
@@ -278,12 +278,79 @@ Moving on to row 3, and performing a similar operation:
 
 Having repeated this procedure, a pattern emerges and an algorithm can be formulated:
 \begin{align*}
-	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i} \\
-	\tilde{y}_{i+1} = y_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} \tilde{y}_i \\
-	i = 1,2,\dots, n-1
+	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i}\ , \indent \text{for $	i = 1,2,\dots, n-1$} \\
+	\tilde{y}_{i+1} = y_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} \tilde{y}_i\ , \indent \text{for $	i = 1,2,\dots, n-1$}
 \end{align*}
-After this procedure, the tridiagonal matrix $\mathbf{\hat{A}}$ is transformed into an uppertriangular matrix. This sort of set of equations can be solved iteratively for $\mathbf{\hat{u}}$, since the last equation has one unknown and the other equations has only two unknowns.
+After this procedure, the tridiagonal matrix $\mathbf{\hat{A}}$ is transformed into an uppertriangular matrix, $\mathbf{\hat{\tilde{A}}}$. This sort of equation set can be solved iteratively for $\mathbf{\hat{u}}$, since the last equation has one unknown and the other equations has only two unknowns, and thus begins a backward substitution, starting at $i = n$. The matrix multiplication now looks like this:
 
+\begin{minipage}{0.5\linewidth}
+\begin{align*}
+\left(\begin{matrix}
+  b_1   & c_1    & 0      & \dots   & \dots  & 0         \\
+  0   & \tilde{b}_2    & c_2    & \ddots  &        & \vdots   \\
+ \vdots     & 0    & \tilde{b}_3    & c_3     & \ddots & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & 0       \\
+ \vdots &        &        & \ddots  & \tilde{b}_{n-1} & c_{n-1}     \\
+  0     & \dots  & \dots  & \dots   & 0  & \tilde{b}_n     \\
+\end{matrix}\right)\left(\begin{matrix}
+u_1 \\
+\vdots\\
+\vdots\\
+\vdots\\
+u_{n-1}\\
+u_{n} \\
+\end{matrix}\right) = \left(\begin{matrix}
+y_1 \\
+\vdots\\
+\vdots\\
+\vdots\\
+\tilde{y}_{n-1}\\
+\tilde{y}_{n} \\
+\end{matrix}\right)
+\end{align*}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+\begin{align*}
+\text{Solving }&\text{from the end and back, we get}\\
+\tilde{y}_n =&\ \tilde{b}_nu_n \quad \Rightarrow u_n = \frac{\tilde{y}_n}{\tilde{a}_n}\\
+\text{which will}& \text{ be used in the equation for $n-1$;}\\
+\tilde{y}_{n-1} &= \tilde{b}_{n-1}u_{n-1} + c_{n-1}u_n\\
+\Rightarrow u_{n-1} &= \frac{\tilde{y}_{n-1} - c_{n-1} u_n}{ \tilde{b}_{n-1}}\\
+\Rightarrow u_{n-1} &= \frac{\tilde{y}_{n-1} - \frac{c_{n-1}\tilde{y}_n}{\tilde{b}_n}}{ \tilde{b}_{n-1}}
+\end{align*}
+\end{minipage}
+
+Which in turn leads directly to the algorithm that solves $u_i$:
+\begin{align*}
+u_{i} &= \frac{\tilde{y}_{i} - \frac{c_{i}\tilde{y}_{i+1}}{\tilde{b}_{i+1}}}{ \tilde{b}_{i}}\ , \indent \text{for $i = n-1, n-2, \dots , 1$}
+\end{align*}
+This method now yields all $u_i$, except for $u_0$ and $u_{n+1}$ which were determined by the Dirichlet conditions in the first place. Thusly, $u(x)$ may be aquired through numerical means, when vectors $\mathbf{\hat{a}}$, $\mathbf{\hat{b}}$, $\mathbf{\hat{c}}$ are provided through a script, providing all their components for the necessary iterations.
+
+This also seems like quite a generalised method to deal with triangular matrix equations, considering the vectors $\mathbf{\hat{a}}$, $\mathbf{\hat{b}}$, and $\mathbf{\hat{c}}$'s components' vagueness, suggesting that this method has a broader use than our mere double derivation representation.
+
+However, the matrix \hyperref[mat:1]{$\mathbf{\hat{A}}$} in question that we are dealing with, is a very specific matrix where all the components of $\mathbf{\hat{a}}$, $\mathbf{\hat{b}}$, $\mathbf{\hat{c}}$ are repeating ad nauseam. As such, the row reduced variant of $\mathbf{\hat{A}}$, namely $\mathbf{\hat{\tilde{A}}}$, should be easy to aquire via a specific numerical algorithm, rather than the algebraic algorithm deduced above.
+
+For this purpose, we may simply insert the values that we know each of the vectors $\mathbf{\hat{a}}$, $\mathbf{\hat{b}}$, $\mathbf{\hat{c}}$ hold into the completedly row reduced form - into $\mathbf{\hat{\tilde{A}}}$ - and consider the shown values for our specific matrix.
+
+\begin{minipage}{0.5\linewidth}
+\begin{align*}
+\left(\begin{matrix}
+  2     & -1          & 0           & \dots   & \dots          & 0           &\tilde{y}_1    \\
+  0     & \tilde{b}_2 & -1          & \ddots  &                & \vdots      &\tilde{y}_2    \\
+ \vdots & 0           & \tilde{b}_3 & -1      & \ddots         & \vdots      &\tilde{y}_3    \\
+ \vdots &             & \ddots      & \ddots  & \ddots         & 0           &\vdots         \\
+ \vdots &             &             & \ddots  & \tilde{b}_{n-1}& -1       &\tilde{y}_{n-1}\\
+  0     & \dots       & \dots       & \dots   & 0              & \tilde{b}_n &\tilde{y}_n
+\end{matrix}\right)
+\end{align*}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+	\begin{align*}
+	\text{with all } &\text{$a_i$ = -1, all $b_i$ = 2, and all $c_i$ = -1:}\\
+	\tilde{b}_2 &= b_2 - \frac{a_2}{b_1} c_1  = 2 - \frac{-1}{2} -1\\
+	\tilde{y}_2 &= y_2 - \frac{-1}{b_1} y_1
+	\end{align*}
+\end{minipage}
 \begin{center}
 \line(1,0){450}
 \end{center}
@@ -293,7 +360,7 @@ After this procedure, the tridiagonal matrix $\mathbf{\hat{A}}$ is transformed i
 This is the code used in this assignment. Anything that was done by hand has been implemented into this pdf, above.
 \lstset{style=pystyle}
 \verb|plot_stuff.py|
-\lstinputlisting{../plot_stuff.py}
+%\lstinputlisting{../plot_stuff.py}
 
 
 \end{document}
