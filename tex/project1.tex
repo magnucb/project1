@@ -419,10 +419,40 @@ return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backwa
 \section{Results}
 \label{section:results}
 	The data can be found in the data-folder on the github-repository\footnote{see section \ref{section:github}} and all the figures presented in this section can found in the img-folder in the same repository. \\
+\subsection{General tridiagonal solver}
 	\begin{figure}
 		%compare general with exact for n = 10,100,1000	
-		%\includegraphics[scale=0.7]{../img/imgname.png}
+		%\includegraphics[scale=0.7]{../img/compare_general_exact.png}
 		\caption{Compare calculated u(x) with exact solution of u(x) for three values of n, using the general tridiagonal solver.}
+		\label{fig:compare_gen_exact}
+	\end{figure}
+
+\subsection{CPU-time}
+	\begin{table}
+		\label{table:cpu-time}
+		\begin{align*}
+		\begin{tabular}{|c|c|c|c|} \hline
+			\log_{10}(n) & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 0.000010 & 0.000006 & 0.008585 \\
+			2 & 0.000047 & 0.000007 & 0.015610 \\
+			3 & 0.000159 & 0.000123 & 0.699342 \\
+			4 & 0.001421 & 0.001749 & \\
+			5 & 0.020054 & 0.024508 & \\
+			6 & 0.056499 & 0.064189 & \\ \hline
+		\end{tabular}
+		\end{align*}
+		\caption{CPU-time each methods use for calculating u(x) n seconds}
+	\end{table}
+	
+\subsection{Relative error}
+	\begin{table}
+		\label{table:rel_error}
+		\caption{•}
+	\end{table}
+	\begin{figure}
+		\label{fig:rel_error}
+		\
+		\caption{•}
 	\end{figure}
 	
 \begin{center}

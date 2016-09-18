@@ -1,7 +1,12 @@
 \select@language {english}
-\contentsline {section}{\numberline {1}Introduction}{2}{section.1}
-\contentsline {section}{\numberline {2}Problem}{2}{section.2}
-\contentsline {section}{\numberline {3}Method}{2}{section.3}
-\contentsline {section}{\numberline {4}Explanation of programs}{5}{section.4}
-\contentsline {subsection}{\numberline {4.1}main.cpp}{5}{subsection.4.1}
-\contentsline {section}{\numberline {5}Appendix - Program list}{7}{section.5}
+\contentsline {section}{\numberline {1}Introduction}{3}{section.1}
+\contentsline {section}{\numberline {2}Problem}{3}{section.2}
+\contentsline {section}{\numberline {3}Method}{3}{section.3}
+\contentsline {section}{\numberline {4}Explanation of programs}{6}{section.4}
+\contentsline {subsection}{\numberline {4.1}main.cpp}{6}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}make\_data.py}{7}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}plot\_stuff.py}{8}{subsection.4.3}
+\contentsline {section}{\numberline {5}Results}{8}{section.5}
+\contentsline {subsection}{\numberline {5.1}General tridiagonal solver}{8}{subsection.5.1}
+\contentsline {subsection}{\numberline {5.2}CPU-time}{8}{subsection.5.2}
+\contentsline {section}{\numberline {6}Appendix - Github}{9}{section.6}

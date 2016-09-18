@@ -115,6 +115,5 @@ def epsilon_plots(n_range=[10,100,1000]):
 #make plots
 #compare_methods(n=10)
 compare_approx_n(approx_string="general") #exercise b
-#compare_approx_n(approx_string="specific")
-#epsilon_plots()
+epsilon_plots(n_range=np.logspace(1, 5, num=10)) #exercise d
 pyl.show()

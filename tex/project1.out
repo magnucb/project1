@@ -3,4 +3,9 @@
 \BOOKMARK [1][-]{section.3}{Method}{}% 3
 \BOOKMARK [1][-]{section.4}{Explanation of programs}{}% 4
 \BOOKMARK [2][-]{subsection.4.1}{main.cpp}{section.4}% 5
-\BOOKMARK [1][-]{section.5}{Appendix - Program list}{}% 6
+\BOOKMARK [2][-]{subsection.4.2}{make\137data.py}{section.4}% 6
+\BOOKMARK [2][-]{subsection.4.3}{plot\137stuff.py}{section.4}% 7
+\BOOKMARK [1][-]{section.5}{Results}{}% 8
+\BOOKMARK [2][-]{subsection.5.1}{General tridiagonal solver}{section.5}% 9
+\BOOKMARK [2][-]{subsection.5.2}{CPU-time}{section.5}% 10
+\BOOKMARK [1][-]{section.6}{Appendix - Github}{}% 11
