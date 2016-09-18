@@ -107,13 +107,13 @@ into a one-dimensional form bounded by Dirichlet boundary conditions.
 \begin{align*}
 -u''(x) = f(x)
 \end{align*}
-so that discretized linear algebra may be committed unto the equation, and yield a method for numerical integration.
+so that discretized linear algebra may be committed unto the equation, yielding a number of numerical methods for aquiring the underivated function $u(x)$.
 \end{abstract}
 \begin{center}
 \line(1,0){450}
 \end{center}
 
-\newpage
+%\newpage
 \tableofcontents
 
 \newpage
@@ -122,7 +122,7 @@ so that discretized linear algebra may be committed unto the equation, and yield
 \subsubsection{Introduction}
 The production of this document will inevitably familiarize its authors with the programming language \verb|C++|, and to this end mathematical groundwork must first be elaborated to translate a Poisson equation from continuous calculus form, into a discretized numerical form.
 
-The Poisson equation is rewritten to a simplified form, for which a real solution is given, with with we will compare our numerical approximation to the real solution.
+The Poisson equation is rewritten to a simplified form, for which a real solution is given, with which we will compare our numerical approximation to the real solution.
 
 The real motivation for this project, though, is to find a viable numerical method for double integration and the implementation of such.
 
@@ -137,8 +137,7 @@ Reviewing the Poisson equation:
 r &\rightarrow x, \\
 \phi &\rightarrow u,\\
 4\pi r\rho(r) &\rightarrow f, \indent \text{which produces the simplified form}
-\end{align*}
-\begin{align*}\label{eq:1}\tag{1}
+\end{align*}\begin{align*}\label{eq:1}\tag{1}
 -u''(x) &= f(x), \indent \text{for which we assume that} \indent f(x) = 100e^{-10x}, \\
 \Rightarrow u(x) &= 1- (1-e^{-10})x - e^{-10x},\ \text{with bounds:}\ x \in [0,1],\ u(0) = u(1)= 0
 \end{align*}
@@ -251,9 +250,8 @@ Starting the Gaussian elimination with the second row, row II, a row operation i
 	\tilde{c}_2 &= c_2 - \frac{a_2}{b_1} \times 0 = c_2 \\
 	\tilde{y}_2 &= y_2 - \frac{a_2}{b_1} y_1
 	\end{align*}
-\end{minipage} \\
-
-Moving on to row 3, and performing a similar operation: \\
+\end{minipage}
+Moving on to row 3, and performing a similar operation:
 
 \begin{minipage}{0.5\linewidth}
 \begin{align*}
@@ -277,6 +275,7 @@ Moving on to row 3, and performing a similar operation: \\
 	\tilde{y}_3 &= y_3 - \frac{a_3}{\tilde{b}_2} \tilde{y}_2
 	\end{align*}
 \end{minipage}
+
 Having repeated this procedure, a pattern emerges and an algorithm can be formulated:
 \begin{align*}
 	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i} \\
@@ -284,7 +283,6 @@ Having repeated this procedure, a pattern emerges and an algorithm can be formul
 	i = 1,2,\dots, n-1
 \end{align*}
 After this procedure, the tridiagonal matrix $\mathbf{\hat{A}}$ is transformed into an uppertriangular matrix. This sort of set of equations can be solved iteratively for $\mathbf{\hat{u}}$, since the last equation has one unknown and the other equations has only two unknowns.
-
 
 \begin{center}
 \line(1,0){450}

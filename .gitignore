@@ -46,3 +46,10 @@ Network Trash Folder
 Temporary Items
 .apdisk
 *.user
+*.aux
+*.log
+tex/project1.out
+*.out
+*.toc
+*.bak
+*.gz

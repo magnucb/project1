@@ -4,11 +4,12 @@ import sys
 
 curdir = os.getcwd()
 data_dict = {} #dictionary of files
-n_range = [10,50,80, 100, 500, 800, 1000, 5000, 10000]
+n_range_LU = pyl.logspace(1,3,num=3)
+n_range_tridiag = pyl.logspace(1, 4,num=7)
 
-for n in n_range:
+for n in n_range_tridiag:
     #loop through different n's
-    with open(curdir+"/data/dderiv_u_c++_n%d_tridiag.dat"%(n), 'r') as infile:
+    with open(curdir+"/data/dderiv_u_c++_n%d_tridiag.dat"%(int(n)), 'r') as infile:
         full_file = infile.read() #read entire file into text
         lines = full_file.split('\n') #separate by EOL-characters
         lines = lines[:-1] #remove last line (empty line)
@@ -30,53 +31,6 @@ for n in n_range:
 def u_exact(x):
     u =  1.0 - (1.0 - pyl.exp(-10.0))*x - pyl.exp(-10.0*x)
     return u
-
-def plot_generator(version, n):
-    """
-    plot generator of generated data
-    """
-    datafile = open(curdir+"/data/dderiv_u_python_v%s_n%d.dat"%(version,n))
-    data = []
-
-    for line in datafile:
-        linesplit = [item.replace(",","") for item in line.split()]
-        data.append(linesplit)
-
-    columns = data[0]
-    data    = pyl.array(data[1:]).astype(pyl.float64)
-    for i in xrange(len(columns)-1):
-        pyl.figure() # comment out this line to unify the plots ... when their dimensions correlate
-        pyl.plot(data[:,0], data[:,i+1], label=r"%s" % columns[i+1])
-        pyl.xlabel("x")
-        pyl.ylabel(r"%s" % columns[i+1])
-        pyl.title(r"Plot\ of\ %s\ over\ x" % columns[i+1])
-        pyl.legend(loc='best')
-    
-    # pyl.savefig("evil_plot.png", dpi=400)
-    pyl.show()
-    datafile.close()
-
-def harry_plotter():
-    #plot pre-game
-    pyl.figure()
-    pyl.grid(True)
-    pyl.title("function u for different steplengths")
-    pyl.ylabel("u(x)")
-    pyl.xlabel("x")
-    for n in n_range:
-        x = pyl.array(data_dict["n=%d"%n]["x"])
-        u_gen = pyl.array(data_dict["n=%d"%n]["u_gen"])
-        u_spec = pyl.array(data_dict["n=%d"%n]["u_spec"])
-        u_LU = pyl.array(data_dict["n=%d"%n]["u_LU"])
-        pyl.plot(x,u_gen, 'g-', label="general tridiag, n=%d"%n)
-        pyl.plot(x,u_spec, 'r-', label="specific tridiag, n=%d"%n)
-        pyl.plot(x,u_LU, 'b-', label="LU-dekomp, n=%d"%n)
-        
-    u_ex = u_exact(x)
-    pyl.plot(x, u_ex, 'k-', label="exact, n=%d"%len(x))
-    #pyl.legend(loc="best",prop={"size":8})
-    pyl.show()
-    return None
 
 def compare_methods(n):
     """
@@ -119,6 +73,7 @@ def compare_approx_n(n_range=[10,100,1000], approx_string="general"):
     pyl.title("approximation by %s tridiagonal method"%approx_string)
 
     for n in n_range:
+        n = int(n)
         x = pyl.array(data_dict["n=%d"%n]["x"])
         u_approx = pyl.array(data_dict["n=%d"%n][approx_key])
         pyl.plot(x, u_approx, '--', label="n=%1.1e"%n)
@@ -161,6 +116,5 @@ def epsilon_plots(n_range=[10,100,1000]):
 compare_methods(n=10)
 #compare_approx_n(approx_string="general")
 #compare_approx_n(approx_string="specific")
-pyl.show()
 #epsilon_plots()
-#pyl.show()
+pyl.show()

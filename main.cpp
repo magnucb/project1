@@ -139,11 +139,9 @@ double specific_tridiag(vec &arg_u, vec &arg_y, int arg_n){
     for (int i=1; i<=arg_n-1; i++){
         d(i) = (i+1)/( (double) i );
     }
-
     for (int i=2; i<=arg_n-2; i++){
         arg_y(i) += arg_y(i-1)/d(i-1);
     }
-
     for (int i=arg_n-2; i>=1; i--){
         arg_u(i) = (arg_y(i) + arg_u(i+1))/d(i);
     }
