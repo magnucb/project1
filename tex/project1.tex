@@ -415,24 +415,24 @@ return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backwa
 	'compare\_approx\_n' plots u(x) against x for several values of n for one of the tri-diagonal solvers. \\
 	'epsilon\_plots' calculates the maximum relative error and makes a log-log-plot against step-length. This done by calculating the maximum difference between $u_{exact}$ and $u_{general}$ for a series of n-values, using this difference to find the relative error $10^\epsilon = \left|\frac{v-u}{u}\right|$ for every n-value. \\
 	These functions are called to make the plots in section \ref{section:results}
-	
+
 \section{Results}
 \label{section:results}
 	The data can be found in the data-folder on the github-repository\footnote{see section \ref{section:github}} and all the figures presented in this section can found in the img-folder in the same repository. \\
+	
 \subsection{General tridiagonal solver}
-	\begin{figure}
+	\begin{figure}[h!]
 		%compare general with exact for n = 10,100,1000	
-		%\includegraphics[scale=0.7]{../img/compare_general_exact.png}
+		\includegraphics[scale=0.7]{../img/compare_general_exact.png}
 		\caption{Compare calculated u(x) with exact solution of u(x) for three values of n, using the general tridiagonal solver.}
 		\label{fig:compare_gen_exact}
 	\end{figure}
 
 \subsection{CPU-time}
-	\begin{table}
+	\begin{table}[h!]
 		\label{table:cpu-time}
-		\begin{align*}
 		\begin{tabular}{|c|c|c|c|} \hline
-			\log_{10}(n) & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
 			1 & 0.000010 & 0.000006 & 0.008585 \\
 			2 & 0.000047 & 0.000007 & 0.015610 \\
 			3 & 0.000159 & 0.000123 & 0.699342 \\
@@ -440,20 +440,59 @@ return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backwa
 			5 & 0.020054 & 0.024508 & \\
 			6 & 0.056499 & 0.064189 & \\ \hline
 		\end{tabular}
-		\end{align*}
-		\caption{CPU-time each methods use for calculating u(x) n seconds}
+		\caption{CPU-time each methods use for calculating u(x) in seconds}
+	%\end{table}
+	%\begin{table}[h!]
+		\label{table:cpu-frequency}
+		\begin{tabular}{|c|c|c|c|} \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 1e+6 & 1.67e+6 & 1.16e+3 \\
+			2 & 2.13e+6 & 1.43e+7 & 6.40e+3 \\
+			3 & 6.29e+6 & 8.13e+6 & 1.43e+3 \\
+			4 & 7.03e+6 & 5.72e+6 & \\
+			5 & 4.99e+6 & 4.08e+6 & \\
+			6 & 1.77e+7 & 1.56e+7 & \\ \hline
+		\end{tabular}
+		\caption{Matrix size per computation time. This data was found by dividing n (in table \ref{table:cpu-time} by computational time in the same table)}
+	%\end{table}
+	%\begin{table}[h!]
+		\label{table:flops-per-sec}
+		\begin{tabular}{|c|c|c|c|} \hline
+			$\log_{10}(n)$ & general tridiagonal[s] & specific tridiagonal[s] & LU decomposition [s] \\ \hline
+			1 & 9e+6 & 6.68e+6 & x $\times$ 1.16e+3 \\
+			2 & 1.92e+7 & 5.72e+7 & x $\times$ 6.4e+3 \\
+			3 & 5.66e+7 & 3.25e+7 & x $\times$ 1.43e+3 \\
+			4 & 6.33e+7 & 2.29e+7 & \\
+			5 & 4.49e+7 & 1.63e+7 & \\
+			6 & 1.59e+8 & 6.24e+7 & \\ \hline
+		\end{tabular}
+		\caption{Flops per second where found by multiplying table \ref{table:cpu-frequency} by the number of flops per iteration (9 for general and 4 for specific)}
 	\end{table}
 	
 \subsection{Relative error}
-	\begin{table}
-		\label{table:rel_error}
-		\caption{•}
+	\begin{table}[h!]
+	\centering
+		\label{table:relerror}
+		\begin{tabular}{|c|c|c|} \hline
+			n & $\log_{10}(h)$ & $\epsilon$ \\
+			10 & -1.0414 & -1.0140 \\
+			100 & -2.0043 & -3.0709 \\	
+			1000 & -3.0004 & -5.0381 \\
+			10000 & -4.0000 & -3.9641 \\ \hline
+		\end{tabular}
+		\caption{table of epsilon-values of various step-lengths}
 	\end{table}
-	\begin{figure}
-		\label{fig:rel_error}
-		%\includegraphics[scale=0.7]{../img/epsilon.png}
-		\caption{•}
+	\begin{figure}[h!]
+		\label{fig:relerror}
+		\includegraphics[scale=0.7]{../img/epsilon.png}
+		\caption{log-log-plot of table \ref{table:rel_error}}
 	\end{figure}
+	
+\section{Conclusion and discussion}
+	From section \ref{section:results} it becomes clear that the numerical solvers are quite accurate for n=100 and above(h=1/99 and below). This becomes clear when one examines figure \ref{fig:compare_gen_exact} where the approximation by solver lies on top of the exact solution for n=10 and n=100. \\
+	When it comes to computing time, the LU-decomposition is much less efficient(to no surprise for anyone), however there seems to be a slight bug in the timing of specific tridiagonal solver. This method becomes SLOWER then the general solver for high values of n, opposed to the previous expectation(remember that specific solver calculates $\simeq$ 4n flops, while the general solver calculates $\simeq$ 9n flops). \\
+	By looking at table \ref{table:flops-per-sec} the number of total floating point operations per second should the same for all three methods since they are all run on the same computer, however there are discrepencies when comparing the specific and general solvers, as mentioned earlier. the number of floating point operations per iteration for the LU-decomposition can now be determined by solving for x. This factor x is 7758, 3000 and 39580 for the three recorded instances of LU-decomposition. The results are way of from eachother(hinting towards errors in the program CPU-timing or calculation), but they are all very much larger then the factors 9 and 4 in the general and specific methods. \\
+	The program was unsuccesful at storing the data for values of n larger then 1e+4, so the graph of epsilon streches over a limited span of values, however a trend still appears. As the step-length decreases the relative error also decreases (with a slope of $\epsilon = h^2$), until it hits a minimum value at $h=10^{-3}$ and starts increasing with a slope of $\epsilon = -h$ as h decreases further. \\	
 	
 \begin{center}
 \line(1,0){450}
@@ -462,10 +501,7 @@ return (t1 - t0)/((double) CLOCKS_PER_SEC); //measure time of forward and backwa
 \newpage
 \section{Appendix - Github}
 \label{section:github}
-This is the code used in this assignment. Anything that was done by hand has been implemented into this pdf, above.
-\lstset{style=pystyle}
-\verb|plot_stuff.py|
-\lstinputlisting{../plot_stuff.py}
+
 
 
 \end{document}

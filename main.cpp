@@ -135,10 +135,10 @@ double specific_tridiag(vec &arg_u, vec &arg_y, int arg_n){
     clock_t t0,t1;
     vec d = zeros<vec>(arg_n);
 
-    t0 = clock();
     for (int i=1; i<=arg_n-1; i++){
         d(i) = (i+1)/( (double) i );
     }
+    t0 = clock();
     for (int i=2; i<=arg_n-2; i++){
         arg_y(i) += arg_y(i-1)/d(i-1);
     }

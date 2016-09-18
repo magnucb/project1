@@ -5,7 +5,7 @@ import sys
 curdir = os.getcwd()
 data_dict = {} #dictionary of files
 n_range_LU = pyl.logspace(1,3,num=3)
-n_range_tridiag = pyl.logspace(1, 4,num=7)
+n_range_tridiag = pyl.logspace(1, 4, num=4)
 
 for n in n_range_tridiag:
     #loop through different n's
@@ -93,7 +93,7 @@ def epsilon_plots(n_range=[10,100,1000]):
         v = pyl.array(data_dict["n=%d"%n]["u_gen"])
         #calculate eps_max by finding max of |v_i - u_i|
         max_diff_uv = 0; jmax = 0;
-        for j in range(n):
+        for j in range(int(n)):
             diff_uv = abs(v[j]-u[j])
             if diff_uv > max_diff_uv:
                 max_diff_uv = diff_uv
@@ -102,18 +102,19 @@ def epsilon_plots(n_range=[10,100,1000]):
             sys.exit("There is an error in calculating the max_epsilon")
         eps_max[i] = pyl.log10(max_diff_uv/float(abs(u[jmax])))
         h[i] = pyl.log10(1.0/(n+1))
+        print "%d & %1.4f & %1.4f \\\\"%(n, h[i], eps_max[i])
     pyl.figure("epsilon")
     pyl.grid(True)
     pyl.hold(True)
     pyl.xlabel(r"\log_{10}(h)")
     pyl.ylabel(r"$\epsilon = \log_{10}\left(\frac{u_{approx}-e_{exact}}{u_{exact}}\right)$")
     pyl.title("log-plot of epsilon against step-length h")
-    pyl.plot(h, eps_max, 'ko')
+    pyl.plot(h, eps_max, 'k-')
     pyl.legend(loc='best')
     pyl.savefig(curdir+"/img/epsilon.png")
 
 #make plots
 #compare_methods(n=10)
 compare_approx_n(approx_string="general") #exercise b
-epsilon_plots(n_range=np.logspace(1, 5, num=10)) #exercise d
+epsilon_plots(n_range=pyl.logspace(1, 4, num=4)) #exercise d
 pyl.show()

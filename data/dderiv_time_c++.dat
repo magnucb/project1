@@ -1,30 +1,26 @@
 #data for CPU time in c++ program
-LU method: n=10 time=0.008585
-LU method: n=100 time=0.015610
-LU method: n=1000 time=0.699342
+LU method: n=10 time=0.001354
+LU method: n=100 time=0.268428
+LU method: n=1000 time=0.724849
 general tridiagonal method: n=10 time=0.000008
 specific tridiagonal method: n=10 time=0.000006
-general tridiagonal method: n=100 time=0.000009
-specific tridiagonal method: n=100 time=0.000007
-general tridiagonal method: n=1000 time=0.000102
-specific tridiagonal method: n=1000 time=0.000123
-general tridiagonal method: n=10000 time=0.001421
-specific tridiagonal method: n=10000 time=0.001749
-general tridiagonal method: n=100000 time=0.020054
-specific tridiagonal method: n=100000 time=0.024508
-general tridiagonal method: n=1000000 time=0.056499
-specific tridiagonal method: n=1000000 time=0.064189
-general tridiagonal method: n=10 time=0.000018
-specific tridiagonal method: n=10 time=0.000013
-general tridiagonal method: n=31 time=0.000003
-specific tridiagonal method: n=31 time=0.000003
-general tridiagonal method: n=100 time=0.000008
-specific tridiagonal method: n=100 time=0.000009
-general tridiagonal method: n=316 time=0.000076
-specific tridiagonal method: n=316 time=0.000085
-general tridiagonal method: n=1000 time=0.000153
-specific tridiagonal method: n=1000 time=0.000187
-general tridiagonal method: n=3162 time=0.000611
-specific tridiagonal method: n=3162 time=0.005665
-general tridiagonal method: n=10000 time=0.001901
-specific tridiagonal method: n=10000 time=0.002651
+general tridiagonal method: n=100 time=0.000032
+specific tridiagonal method: n=100 time=0.000022
+general tridiagonal method: n=1000 time=0.000208
+specific tridiagonal method: n=1000 time=0.000141
+general tridiagonal method: n=10000 time=0.001427
+specific tridiagonal method: n=10000 time=0.001162
+general tridiagonal method: n=100000 time=0.017081
+specific tridiagonal method: n=100000 time=0.013613
+general tridiagonal method: n=1000000 time=0.056475
+specific tridiagonal method: n=1000000 time=0.045043
+general tridiagonal method: n=10 time=0.000016
+specific tridiagonal method: n=10 time=0.000009
+general tridiagonal method: n=100 time=0.000035
+specific tridiagonal method: n=100 time=0.000025
+general tridiagonal method: n=1000 time=0.000180
+specific tridiagonal method: n=1000 time=0.000124
+general tridiagonal method: n=10000 time=0.000952
+specific tridiagonal method: n=10000 time=0.000771
+general tridiagonal method: n=100000 time=0.022034
+specific tridiagonal method: n=100000 time=0.015124

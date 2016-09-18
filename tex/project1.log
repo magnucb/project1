@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.16)  18 SEP 2016 23:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (TeX Live 2015/Debian) (preloaded format=pdflatex 2016.9.16)  19 SEP 2016 01:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -890,116 +890,103 @@ Underfull \hbox (badness 10000) in paragraph at lines 421--422
 
  []
 
+<../img/compare_general_exact.png, id=151, 578.16pt x 433.62pt>
+File: ../img/compare_general_exact.png Graphic file (type png)
+
+<use ../img/compare_general_exact.png>
+Package pdftex.def Info: ../img/compare_general_exact.png used on input line 42
+6.
+(pdftex.def)             Requested size: 404.70924pt x 303.53192pt.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Package caption Warning: \label without proper reference on input line 433.
+See the caption package documentation for explanation.
+
+
+LaTeX Warning: Reference `table:cpu-time' on page 8 undefined on input line 456
+.
+
+
+Package caption Warning: \label without proper reference on input line 433.
+See the caption package documentation for explanation.
+
+
+LaTeX Warning: Reference `table:cpu-time' on page 8 undefined on input line 456
+.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<../img/epsilon.png, id=157, 578.16pt x 433.62pt>
+File: ../img/epsilon.png Graphic file (type png)
+ <use ../img/epsilon.png>
+Package pdftex.def Info: ../img/epsilon.png used on input line 487.
+(pdftex.def)             Requested size: 404.70924pt x 303.53192pt.
+
+
+LaTeX Warning: Reference `table:rel_error' on page 8 undefined on input line 48
+8.
+
+
+LaTeX Warning: Reference `table:rel_error' on page 8 undefined on input line 48
+8.
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+LaTeX Warning: Hyper reference `github.com/warmup' on page 8 undefined on input
+ line 495.
+
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.443 		\end{align*}
-                    
+l.495 ...ight1509/fys4150_h16/tree/master/warmup}}
+                                                  
 I've inserted a begin-math/end-math symbol since I think
 you left one out. Proceed, with fingers crossed.
-
-! Extra }, or forgotten $.
-<template> \unskip \hfil }
-                          \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.443 		\end{align*}
-                    
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
 
 ! Missing $ inserted.
 <inserted text> 
                 $
-l.443 		\end{align*}
-                    
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.443 		\end{align*}
-                    
+l.495 ...ight1509/fys4150_h16/tree/master/warmup}}
+                                                  
 I've inserted something that you may have forgotten.
 (See the <inserted text> above.)
 With luck, this will get me unwedged. But if you
 really didn't forget anything, try typing `2' now; then
 my insertion and my current dilemma will both disappear.
 
-! Missing $ inserted.
-<inserted text> 
-                $
-l.443 		\end{align*}
-                    
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
+[8] [9 <../img/compare_general_exact.png>]
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 508.
+ [10] [11 <../img/epsilon.png>]
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 508.
 
-! Extra }, or forgotten $.
-<template> \unskip \hfil }
-                          \hskip \tabcolsep \hskip -.5\arrayrulewidth \vrule...
-l.443 		\end{align*}
-                    
-I've deleted a group-closing symbol because it seems to be
-spurious, as in `$x}$'. But perhaps the } is legitimate and
-you forgot something else, as in `\hbox{$x}'. In such cases
-the way to recover is to insert both the forgotten and the
-deleted material, e.g., by typing `I$}'.
-
-! Missing $ inserted.
-<inserted text> 
-                $
-l.443 		\end{align*}
-                    
-I've inserted a begin-math/end-math symbol since I think
-you left one out. Proceed, with fingers crossed.
-
-! Missing } inserted.
-<inserted text> 
-                }
-l.443 		\end{align*}
-                    
-I've inserted something that you may have forgotten.
-(See the <inserted text> above.)
-With luck, this will get me unwedged. But if you
-really didn't forget anything, try typing `2' now; then
-my insertion and my current dilemma will both disappear.
-
-[8] (/usr/share/texlive/texmf-dist/tex/latex/listings/lstlang1.sty
-File: lstlang1.sty 2015/06/04 1.6 listings language file
-)
-(../plot_stuff.py
-Overfull \hbox (46.89116pt too wide) in paragraph at lines 27--28
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][]
-[][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][][
-][][][][][][][][][][][][] 
- []
-
-[9] [10])
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 460.
- [11]
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 460.
- (./project1.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 460.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 460.
+(./project1.aux)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 508.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 508.
 Package rerunfilecheck Info: File `project1.out' has not changed.
-(rerunfilecheck)             Checksum: DA4D397381B04E4871A3B576EF2BA675;602.
+(rerunfilecheck)             Checksum: C3CF841E85308880DB849A552EF1B608;727.
 
 
 LaTeX Warning: There were undefined references.
 
-Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 460.
+Package atveryend Info: Empty hook `AtVeryVeryEnd' on input line 508.
  ) 
 Here is how much of TeX's memory you used:
- 10375 strings out of 494910
- 147054 string characters out of 6179836
- 295351 words of memory out of 5000000
- 13300 multiletter control sequences out of 15000+600000
+ 10000 strings out of 494910
+ 142694 string characters out of 6179836
+ 258769 words of memory out of 5000000
+ 13045 multiletter control sequences out of 15000+600000
  25877 words of font info for 74 fonts, out of 8000000 for 9000
  36 hyphenation exceptions out of 8191
- 42i,18n,65p,594b,1918s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 42i,18n,65p,594b,1650s stack positions out of 5000i,500n,10000p,200000b,80000s
  </home/oyvind/.texmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0800.600pk> </home/
 oyvind/.texmf-var/fonts/pk/ljfour/jknappen/ec/ectt0900.600pk> </home/oyvind/.te
 xmf-var/fonts/pk/ljfour/jknappen/ec/ecrm0900.600pk> </home/oyvind/.texmf-var/fo
@@ -1016,18 +1003,20 @@ ur/jknappen/ec/ecrm1095.600pk></usr/share/texlive/texmf-dist/fonts/type1/public
 nts/cm/cmex10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
 /cmmi10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi6
 .pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></
-usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/sha
-re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texli
-ve/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf
--dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fo
-nts/type1/public/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/ty
-pe1/public/amsfonts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/pub
-lic/amsfonts/cm/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/ams
-fonts/cm/cmsy9.pfb>
-Output written on project1.pdf (11 pages, 259740 bytes).
+usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb></usr/sha
+re/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/share/texl
+ive/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></usr/share/texlive/texm
+f-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/share/texlive/texmf-dist/f
+onts/type1/public/amsfonts/cm/cmr8.pfb></usr/share/texlive/texmf-dist/fonts/typ
+e1/public/amsfonts/cm/cmr9.pfb></usr/share/texlive/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmsy10.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsf
+onts/cm/cmsy7.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm
+/cmsy8.pfb></usr/share/texlive/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy9.
+pfb>
+Output written on project1.pdf (11 pages, 331420 bytes).
 PDF statistics:
- 793 PDF objects out of 1000 (max. 8388607)
- 386 compressed objects within 4 object streams
- 178 named destinations out of 1000 (max. 500000)
- 89 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 657 PDF objects out of 1000 (max. 8388607)
+ 269 compressed objects within 3 object streams
+ 62 named destinations out of 1000 (max. 500000)
+ 115 words of extra memory for PDF output out of 10000 (max. 10000000)
 

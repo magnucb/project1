@@ -29,7 +29,7 @@ for n in n_range_tridiag:
 
 #make u(x) data for tridiagonal methods
 #run tridiag methods for n = logspace(10,10000,some number of variable)
-n_range_tridiag = np.logspace(1, 5, num=10)
+n_range_tridiag = np.logspace(1, 4, num=4)
 for n in n_range_tridiag:
     os.system("./../build-project1-Desktop_Qt_5_7_0_GCC_64bit-Release/project1 %d "%int(n))
 

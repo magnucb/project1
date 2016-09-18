@@ -8,4 +8,6 @@
 \BOOKMARK [1][-]{section.5}{Results}{}% 8
 \BOOKMARK [2][-]{subsection.5.1}{General tridiagonal solver}{section.5}% 9
 \BOOKMARK [2][-]{subsection.5.2}{CPU-time}{section.5}% 10
-\BOOKMARK [1][-]{section.6}{Appendix - Github}{}% 11
+\BOOKMARK [2][-]{subsection.5.3}{Relative error}{section.5}% 11
+\BOOKMARK [1][-]{section.6}{Conclusion and discussion}{}% 12
+\BOOKMARK [1][-]{section.7}{Appendix - Github}{}% 13
