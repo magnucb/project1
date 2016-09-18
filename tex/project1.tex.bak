@@ -252,6 +252,7 @@ Starting the Gaussian elimination with the second row, row II, a row operation i
 	\end{align*}
 \end{minipage}
 Moving on to row 3, and performing a similar operation:
+
 \begin{minipage}{0.5\linewidth}
 \begin{align*}
 \left(\begin{matrix}
@@ -274,6 +275,7 @@ Moving on to row 3, and performing a similar operation:
 	\tilde{y}_3 &= y_3 - \frac{a_3}{\tilde{b}_2} \tilde{y}_2
 	\end{align*}
 \end{minipage}
+
 Having repeated this procedure, a pattern emerges and an algorithm can be formulated:
 \begin{align*}
 	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i} \\
@@ -281,177 +283,6 @@ Having repeated this procedure, a pattern emerges and an algorithm can be formul
 	i = 1,2,\dots, n-1
 \end{align*}
 After this procedure, the tridiagonal matrix $\mathbf{\hat{A}}$ is transformed into an uppertriangular matrix. This sort of set of equations can be solved iteratively for $\mathbf{\hat{u}}$, since the last equation has one unknown and the other equations has only two unknowns.
-=======
-\begin{align}
-\nonumber
-\left(\pd{u}{x}\right)_{fw} = \frac{u_{i+1} - u_i}{h} \quad\quad
-\left(\pd{u}{x}\right)_{bw} = \frac{u_{i} - u_{i-1}}{h} \\
-\nonumber
-\left(\pd{}{x}\right)^2[u_i] = \left(\pd{}{x}_{bw}\right)\left(\pd{}{x}\right)_{fw}[u_i] = \left(\pd{}{x}\right)_{bw}\left(\frac{u_{i+1} - u_i}{h}\right) =\frac{\left(\pd{u_{i+1}}{x}\right)_{bw} - \left(\pd{u_i}{x}\right)_{bw}}{h} \\
-\nonumber
-\left(\pd{}{x}\right)^2[u_i] = \frac{u_{+1} - 2u_i + u_{i-1}}{h^2}\\
-\label{eq:2} \tag{2}
--u''(x) = - \frac{u_{i+1} - 2u_i + u_{i-1}}{h^2} = \frac{- u_{i+1} + 2u_i - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1, \hdots, n
-\end{align}
->>>>>>> 8012ef935debe80b6ecdf933090a6d226464f3f4
-
-%TODO Bareid, look at this
-The discretized prolem can now be solved as a linear algebraic problem.
-Looking closer at the discretized problem:
-\begin{align*}
-	-u''(x_i) = \frac{- u_{i+1} + 2u_i - u_{i-1}}{h^2} &= f_i \\
-	\Rightarrow -u_{i+1} + 2u_i - u_{i-1} &= h^2f_i = y_i\\
-	i = 1: \quad -u_2 + 2u_1 - u_0 &= y_1 \\
-	i = 2: \quad -u_3 + 2u_2 - u_1 &= y_2 \\
-	i = 3: \quad -u_4 + 2u_3 - u_2 &= y_3 \\
-	\vdots& \\
-	i = n: \quad -u_{n+1} + 2u_n - u_{n-1} &= y_n \\
-	\intertext{This is very similar to a linear algebra /matrix problem and we will test a system of equations to match.}
-	A \vec{u} &= \vec{y} \\
-	\begin{bmatrix} %matrix A
-		2 & -1 & 0 & \hdots & \\
-		-1 & 2 & -1 & \hdots & \\
-		0 & -1 & 2 & \ddots & \\
-		\vdots & \vdots & \ddots & \ddots & \\
-		& & & & 
-	\end{bmatrix} %matrix A
-	\begin{bmatrix} %vector u
-		u_0 \\
-		u_1 \\
-		\vdots \\
-		\\
-		u_{n+1}
-	\end{bmatrix} %vector u
-	&= \begin{bmatrix} %vector y
-		y_0 \\
-		y_1 \\
-		\vdots \\
-		\\
-		y_{n+1}
-	\end{bmatrix} %vector u
-	\intertext{This matrix equation will not be valid for the first and last values of $\vec{y}$ because they would require elements of $\vec{u}$ that are not defined; $u_{-1}$ and $u_{n+2}$. Given this constraint we see that the matrix-equation gives the same set of equations that we require.}
-	i = 1: \quad -u_2 + 2u_1 - u_0 &= y_1 \\
-	i = 2: \quad -u_3 + 2u_2 - u_1 &= y_2 \\
-	i = 3: \quad -u_4 + 2u_3 - u_2 &= y_3 \\
-	\vdots& \\
-	i = n: \quad -u_{n+1} + 2u_n - u_{n-1} &= y_n
-\end{align*}
-%END TODO
-
-The coefficients from each of these terms and their corresponding value of $u(x)$ may be represented by a tridiagonal matrix multiplication:
-\begin{align*}
--\frac{d^2}{dx^2}u(x) = f(x) \indent \Rightarrow \indent \mathbf{\hat{A}}\mathbf{\hat{u}} = h^2\mathbf{\hat{f}} \indent \Rightarrow \indent \left(\begin{matrix}
-  2     & -1     & 0      & \dots  & \dots  & 0      \\
- -1     &  2     & -1     & 0      &        & \vdots \\
-  0     & -1     &  2     & \ddots & \ddots & \vdots \\
- \vdots & 0      & \ddots & \ddots & \ddots & 0      \\
- \vdots &        & \ddots & \ddots & \ddots & -1     \\
-  0     & \dots  & \dots  & 0      & -1     & 2      \\
-\end{matrix}\right) \left(\begin{matrix}
-u_0 \\
-\vdots\\
-\vdots\\
-\vdots\\
-\vdots\\
-u_n \\
-\end{matrix}\right) = h^2\left(\begin{matrix}
-f_0 \\
-\vdots\\
-\vdots\\
-\vdots\\
-\vdots\\
-f_n \\
-\end{matrix}\right)
-\end{align*}
-The double derivation is now reduced to a discretized linear algebra  operation by way of matrix multiplication. In our case, $f(x)$ is known to us, and the only unknowns are the $u(x)$'s from $u_1 \rightarrow u_{n-1}$, as per the Dirichlet boundary conditions, which allows the use of the algorithm from equation \href{eq:2}.
-
-%TODO My stuff
-The original problem at hand (the Poisson equation) has now been "degraded" to a simpler, linear algebra problem. \\
-Solving a tridiagonal matrix-problem like this is done by gaussian elimination of the tridiagonal matrix A, and thereby solving $\vec{u}$ for the resulting diagonal-matrix. \\
-
-Firstly the tridiagonal matrix A is rewritten to a series of three vectors $\vec{a}$, $\vec{b}$, and $\vec{c}$ that will represent a general tridiagonal matrix. This will make it easier to include other problems of a general form later. \\
-The tridiagonal matrix A (with the vector y) now looks like: 
-\begin{align*}
-	\begin{bmatrix} %matrix [Ay]
-		b_1 & c_1 & 0 & 0 & \hdots && y_1\\
-		a_2 & b_2 & c_2 & 0 &&& y_2\\
-		0 & a_3 & b_3 & c_3 &&& \vdots\\
-		0 & 0 & a_4 & b_4 & \ddots &  & \\
-		\vdots &&& \ddots & \ddots & c_{n-1} & y_{n-1} \\
-		&&&& a_n & b_n &y_n
-	\end{bmatrix} %matrix [Ay]
-\end{align*}
-
-The gaussian elimination can be split into two parts; a forward substitution were the matrix-elements $a_i$ are set to zero, and a backward substituion were the vector-elements $u_i$ are calculated from known values. \\
-
-starting with row 2, a row-operation is performed to maintain the validity of the system. The goal is to remove element $a_2$ from the row. This is done by subtracting row 1 (multiplied with some constant 'k' from row 2. \\
-\begin{minipage}{0.5\linewidth}
-\begin{align*}
-	\begin{bmatrix} %matrix [Ay]
-		b_1 & c_1 & 0 & 0 & \hdots && y_1\\
-		\tilde{a}_2 & \tilde{b}_2 & \tilde{c}_2 & 0 &&& \tilde{y}_2\\
-		0 & a_3 & b_3 & c_3 &&& y_3\\
-		0 & 0 & a_4 & b_4 & \ddots && \vdots\\
-		\vdots &&& \ddots & \ddots & c_{n-1} & y_{n-1} \\
-		&&&& a_n & b_n &y_n
-	\end{bmatrix} %matrix [Ay]
-\end{align*}
-\end{minipage}
-\begin{minipage}{0.5\linewidth}
-	\begin{align*}
-	\tilde{Row_2} = Row_2 - k \times Row_1
-	\intertext{where k is determined by $\tilde{a}_2 = 0 \quad \Rightarrow k = \frac{a_2}{b_1}$}
-	\tilde{b}_2 = b_2 - \frac{a_2}{b_1} c_1 \\
-	\tilde{c}_2 = c_2 - \frac{a_2}{b_1} \times 0 = c_2 \\
-	\tilde{y}_2 = y_2 - \frac{a_2}{b_1} y_1
-	\end{align*}
-\end{minipage} \\
-
-Moving on to row 3, and performing a similar operation: \\
-
-\begin{minipage}{0.5\linewidth}
-\begin{align*}
-	\begin{bmatrix} %matrix [Ay]
-		b_1 & c_1 & 0 & 0 & \hdots && y_1\\
-		0 & \tilde{b}_2 & c_2 & 0 &&& \tilde{y}_2\\
-		0 & \tilde{a}_3 & \tilde{b}_3 & \tilde{c}_3 &&& \tilde{y}_3\\
-		0 & 0 & a_4 & b_4 & \ddots && \vdots\\
-		\vdots &&& \ddots & \ddots & c_{n-1} & y_{n-1} \\
-		&&&& a_n & b_n &y_n
-	\end{bmatrix} %matrix [Ay]
-\end{align*}
-\end{minipage}
-\begin{minipage}{0.5\linewidth}
-	\begin{align*}
-	\tilde{Row_3} = Row_3 - k \times Row_2
-	\intertext{where k is determined by $\tilde{a}_3 = 0 \quad \Rightarrow k = \frac{a_3}{\tilde{b}_2}$}
-	\tilde{b}_3 = b_3 - \frac{a_3}{\tilde{b}_2} c_2 \\
-	\tilde{c}_3 = c_3 - \frac{a_3}{\tilde{b}_2} \times 0 = c_3 \\
-	\tilde{y}_3 = y_3 - \frac{a_3}{\tilde{b}_2} \tilde{y}_2
-	\end{align*}
-\end{minipage} \\
-
-By repeating this step a pattern emerges, and an algorithm can be found: \\
-\begin{align*}
-	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i} \\
-	\tilde{y}_{i+1} = y_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} \tilde{y}_i \\
-	i = 1, 2, \dots, n-1
-\end{align*}
-
-After this procedure, the tridiagonal matrix A is transformed into an uppertriangular matrix. This sort of set of equations can be solved for u, since the last equation has one unknown and the other equations has only two unknowns. \\
-
-\begin{minipage}{0.5\linewidth}
-\begin{align*}
-	\begin{bmatrix} %matrix [Ay]
-		b_1 & c_1 & 0 & 0 & \hdots && y_1\\
-		0 & \tilde{b}_2 & c_2 & 0 &&& \tilde{y}_2\\
-		0 & 0 & \tilde{b}_3 & \tilde{c}_3 &&& \tilde{y}_3\\
-		0 & 0 & a_4 & b_4 & \ddots && \vdots\\
-		\vdots &&& \ddots & \ddots & c_{n-1} & y_{n-1} \\
-		&&&& a_n & b_n &y_n
-	\end{bmatrix} %matrix [Ay]
-\end{align*}
-\end{minipage}
 
 \begin{center}
 \line(1,0){450}
@@ -462,7 +293,7 @@ After this procedure, the tridiagonal matrix A is transformed into an uppertrian
 This is the code used in this assignment. Anything that was done by hand has been implemented into this pdf, above.
 \lstset{style=pystyle}
 \verb|plot_stuff.py|
-\lstinputlisting{../plot_stuff.py}
+%\lstinputlisting{../plot_stuff.py}
 
 
 \end{document}
