@@ -314,8 +314,20 @@ After this procedure, the tridiagonal matrix A is transformed into an uppertrian
 \end{align*}
 \end{minipage}
 
+\section{Explanation of programs}
+\subsection{main.cpp}
+	The main-program is a \verb|c++|-program designed to take a cmd-line argument that decides the size of the array u, and a boolean argument (0 or 1 that decides wether or not the armadillo-function "solve" should be used.
+	
+	An x-array between 0 and 1 is calculated and the appropriate a,b,c,y-arrays are calcualted as well. For this program the tridiagonal elements are constantly -1, 2 and -1 while y(x) follows the function described in the introduction. 
+	
+	If the boolean cmd-line argument is false, then the program will calculate $\vec{u}$ using the general tridiagonal method(explanation below) and store the CPU-time it takes to calculate $\vec{u}$ using this algorithm.
+	Next, $\vec{u}$ will be calculated using the specialized tridiagonal method(explanation below) and store the CPU-time it takes to calculate $\vec{u}$ using this algorithm. \\
+	Afterwards, since \verb|c++| is terrible at plotting data, all the data (CPU-time of methods, x-arrays, and u-arrays for both methods) are stored in separate files in the data-folder with the csv-format. \\
+	
+	If the boolean cmd-line argument is true, then the program will calculate $\vec{u}$ using LU-decomposition
+	
 \begin{center}
-\line(1,0){450}
+%\line(1,0){450}
 \end{center}
 
 \newpage
