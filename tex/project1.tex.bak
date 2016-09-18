@@ -95,9 +95,9 @@
 \maketitle
 \vspace{10mm}
 \begin{abstract}
-The aim of this project is to get familiar with various vector and matrix operations, from dynamic memory allocation to the usage of programs in the library package of the course.
+The aim of this project is for the students to get familiar with various vector and matrix operations, from dynamic memory allocation to the usage of programs in the library package of the course.
 
-The student was invited to use either brute force-algorithms to calculate linear algebra, or to use a set of recommended linear algebra packages through Armadillo that simplify the syntax of linear algebra. Additionally, dynamic memory handling is expected.
+The students were invited to use either brute force-algorithms to calculate linear algebra, or to use a set of recommended linear algebra packages, i.e. Armadillo, that simplify the syntax of linear algebra. Additionally, dynamic memory handling is expected.
 
 The students will showcase necessary algebra to perform the tasks given to them, and explain the way said algebra is implemented into algorithms. In essence, we're asked to simplify a linear second-order differential equation from the form of the Poisson equation, seen as
 \begin{align*}
@@ -107,7 +107,7 @@ into a one-dimensional form bounded by Dirichlet boundary conditions.
 \begin{align*}
 -u''(x) = f(x)
 \end{align*}
-so that discretized linear algebra may be committed unto the equation, yielding a number of numerical methods for aquiring the underivated function $u(x)$.
+so that discretized linear algebra may be committed unto the equation, and yield a method for numerical integration.
 \end{abstract}
 \begin{center}
 \line(1,0){450}
@@ -117,12 +117,17 @@ so that discretized linear algebra may be committed unto the equation, yielding 
 \tableofcontents
 
 \newpage
-\section{Computational Physics: First project}
-\subsection{(a): The fundamental math}
-\subsubsection{Intro}
+\section{Computational Physics, first project}
+\subsection{The fundamental math}
+\subsubsection{Introduction}
 The production of this document will inevitably familiarize its authors with the programming language \verb|C++|, and to this end mathematical groundwork must first be elaborated to translate a Poisson equation from continuous calculus form, into a discretized numerical form.
 
-The Poisson equation is rewritten to a simplified form, for which a real solution is given, with wich we will compare our numerical approximation to the real solution.
+The Poisson equation is rewritten to a simplified form, for which a real solution is given, with with we will compare our numerical approximation to the real solution.
+
+The real motivation for this project, though, is to find a viable numerical method for double integration and the implementation of such.
+
+\subsubsection{Problem}
+%something something dark side about how we decompose the abstract problem into a real programmable problem
 
 \subsubsection{Method}
 Reviewing the Poisson equation:
@@ -132,23 +137,40 @@ Reviewing the Poisson equation:
 r &\rightarrow x, \\
 \phi &\rightarrow u,\\
 4\pi r\rho(r) &\rightarrow f, \indent \text{which produces the simplified form}
-\end{align*}\begin{align*}\label{eq:1}\tag{1}
+\end{align*}
+\begin{align*}\label{eq:1}\tag{1}
 -u''(x) &= f(x), \indent \text{for which we assume that} \indent f(x) = 100e^{-10x}, \\
 \Rightarrow u(x) &= 1- (1-e^{-10})x - e^{-10x},\ \text{with bounds:}\ x \in [0,1],\ u(0) = u(1)= 0
 \end{align*}
-From here on and out, the methods for finding $u(x)$ numerically will be deduced.
+From here on and out, the methods for finding the doubly integrated function $u(x)$ numerically will be deduced.
 
 To more easily comprehend the syntax from a programming viewpoint, one may refer to the each discretized representation of $x$ and $u$; we know the span of $x$, and therefore we may divide it up into appropriate chunks. Each of these $x_i$ will yield a corresponding $u_i$.
 
-We may calculate each discrete $x_i$ by the form $x_i = ih$ in the interval from $x_0 = 0$ to $x_{n} = 1$ as it is linearly increasing, meaning we use $n$ points in our approximation, yielding the step length $h = 1/n$. Of course, this also yields discretized representation of $u(x_i) = u_i$.
+We may calculate each discrete $x_i$ by the form $x_i = ih$ in the interval from $x_0 = 0$ to $x_{n+1} = 1$ as it is linearly increasing, meaning we use $n+1$ points in our approximation, yielding the step length $h = 1/(n+1)$. Of course, this also yields the discretized representation of $u(x_i) = u_i$.
+
 
 Through Euler's teachings on discretized numerical derivation methods, a second derivative may be constructed through the form of
-\begin{align}\label{eq:2}\tag{2}
--u''(x) = - \frac{u_{+1} + u_{i-1} - 2u_i}{h^2} = \frac{2u_i - u_{i+1} - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1,...,n-1
-\end{align}
-The coefficients from each of these terms and their corresponding value of $u(x)$ may be represented by a tridiagonal matrix multiplication:
 \begin{align*}
--\frac{d^2}{dx^2}u(x) = f(x) \indent \Rightarrow \indent \mathbf{\hat{A}}\mathbf{\hat{u}} = h^2\mathbf{\hat{f}} \indent \Rightarrow \indent \left(\begin{matrix}
+\left(\pd{}{x}\right)_{fw}u(x) &= \frac{u_{i+1} - u_i}{h}\ , \indent
+\left(\pd{}{x}\right)_{bw}u(x) = \frac{u_{i} - u_{i-1}}{h}\ , \\
+\left(\pd{}{x}\right)^2u_i &= \left(\pd{}{x}\right)_{bw}\left(\pd{}{x}\right)_{fw}u_i = \left(\pd{}{x}\right)_{bw}\left(\frac{u_{i+1} - u_i}{h}\right) =\frac{\left(\pd{}{x}\right)_{bw}u_{i+1} - \left(\pd{}{x}\right)_{bw}u_i}{h} \\
+\left(\pd{}{x}\right)^2u_i &= \frac{u_{+1} - 2u_i + u_{i-1}}{h^2}\ , \indent \text{which we then use for the problem \hyperref[eq:1]{in question, (1)}.}\\
+\label{eq:2} \tag{2}
+\Rightarrow -\left(\pd{}{x}\right)^2 u(x) &= - \frac{u_{+1} - 2u_i + u_{i-1}}{h^2} = \frac{2u_i - u_{i+1} - u_{i-1}}{h^2} = f_i , \indent \text{for}\ i = 1,...,n
+\end{align*}
+
+The discretized prolem can now be solved as a linear algebra problem.
+Looking closer at the discretized problem:
+\begin{align*}
+	-u''(x_i) = \frac{- u_{i+1} + 2u_i - u_{i-1}}{h^2} &= f_i\ , \indent\quad \text{for $i$ = 1, \dots, $n$.}\\
+	\Rightarrow \indent -u_{i+1} + 2u_i - u_{i-1} &= h^2f_i\ , \indent \text{substitute $h^2f_i = y_i$, and test for some values:}\\\\
+	i = 1: \indent -u_2 + 2u_1 - u_0 &= y_1 \\
+	i = 2: \indent -u_3 + 2u_2 - u_1 &= y_2 \\
+	i = 3: \indent -u_4 + 2u_3 - u_2 &= y_3 \\
+	\vdots& \\
+	i = n: \indent -u_{n+1} + 2u_n - u_{n-1} &= y_n \\
+	\intertext{By now it should be obvious to recognize that the coefficients corresponding to each of these terms and their corresponding values of $u(x)$ looks very similar to a tridiagonal matrix multiplication problem which could be represented such as this: }
+-\left(\pd{}{x}\right)^2u(x) = f(x) \indent \Rightarrow \indent \mathbf{\hat{A}}\mathbf{\hat{u}} &= \mathbf{\hat{y}} \indent \Rightarrow \indent \left(\begin{matrix}
   2     & -1     & 0      & \dots  & \dots  & 0      \\
  -1     &  2     & -1     & 0      &        & \vdots \\
   0     & -1     &  2     & \ddots & \ddots & \vdots \\
@@ -161,74 +183,111 @@ u_0 \\
 \vdots\\
 \vdots\\
 \vdots\\
-u_n \\
-\end{matrix}\right) = h^2\left(\begin{matrix}
-f_0 \\
+u_{n+1} \\
+\end{matrix}\right) = \left(\begin{matrix}
+y_0 \\
 \vdots\\
 \vdots\\
 \vdots\\
 \vdots\\
-f_n \\
+y_{n+1} \\
 \end{matrix}\right)
+	\intertext{This matrix equation will not be valid for the first, and last, values of $\mathbf{\hat{y}}$ because they would require elements of $\mathbf{\hat{u}}$ that are not defined; $u_{-1}$ and $u_{n+1}$, respectively. Given this constraint we see that the matrix-equation gives the same set of equations that we require.}
+	i = 1: \quad -u_2 + 2u_1 - u_0 &= y_1 \\
+	i = 2: \quad -u_3 + 2u_2 - u_1 &= y_2 \\
+	i = 3: \quad -u_4 + 2u_3 - u_2 &= y_3 \\
+	\vdots& \\
+	i = n: \quad -u_{n+1} + 2u_n - u_{n-1} &= y_n
 \end{align*}
-The double derivation is now reduced to a discretized linear algebra  operation by way of matrix multiplication. In our case, $f(x)$ is known to us, and the only unknowns are the $u(x)$'s from $u_1 \rightarrow u_{n-1}$ as per the Dirichlet boundary conditions \hyperref[eq:1]{(1)}, which allows the use of the algorithm from equation \hyperref[eq:2]{2} in the span of $i \in \{1,n-1\}$.
 
-To further the investigation of a possible algorithm, we start by generalizing the tridiagonal matrix $\mathbf{\hat{A}}$:
+The original problem at hand (\hyperref[eq:1]{the simplified Poisson equation}) has now been reduced to a numerical linear algebra problem. Solving a tridiagonal matrix-problem like this is done by Gaussian elimination of the tridiagonal matrix $\mathbf{\hat{A}}$, and thereby solving $\mathbf{\hat{u}}$ for the resulting diagonal-matrix, as presumably $\mathbf{\hat{A}}$ and $\mathbf{\hat{y}}$ are the knowns in this set.
+
+Firstly the tridiagonal matrix $\mathbf{\hat{A}}$ is rewritten to a series of three vectors $\mathbf{\hat{a}}$, $\mathbf{\hat{b}}$, and $\mathbf{\hat{c}}$ that will represent a general tridiagonal matrix. This will make it easier to include other problems of a general form later.
+
+The tridiagonal matrix $\mathbf{\hat{A}}$ with the vector $\mathbf{\hat{y}}$ included now looks like: 
 \begin{align*}
 \left(\begin{matrix}
-  b_0   & c_0    & 0      & \dots  & \dots  & 0      \\
-  a_0   & b_1    & c_1    & 0      &        & \vdots \\
-  0     & a_1    & b_2    & c_2    & \ddots & \vdots \\
- \vdots & 0      & a_2    & b_3    & \ddots & 0      \\
- \vdots &        & \ddots & \ddots & \ddots & c_{n-1}\\
-  0     & \dots  & \dots  & 0      & a_{n-1}& b_n    \\
-\end{matrix}\right) \left(\begin{matrix}
-u_0     \\
-u_1     \\
-\vdots  \\
-\vdots  \\
-u_{n-1} \\
-u_n     \\
-\end{matrix}\right) = h^2\left(\begin{matrix}
-f_0     \\
-f_1     \\
-\vdots  \\
-\vdots  \\
-f_{n-1} \\
-f_n     \\
+  b_0   & c_0    & 0      & \dots   & \dots  & 0       & y_0     \\
+  a_1   & b_1    & c_1    & \ddots  &        & \vdots  & \vdots  \\
+  0     & a_2    & b_2    & c_2     & \ddots & \vdots  & \vdots  \\
+ \vdots & \ddots & a_3    & b_3     & \ddots & 0       & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_{n}   & \vdots  \\
+  0     & \dots  & \dots  & 0       & a_{n+1}& b_{n+1} & y_{n+1} \\
+\end{matrix}\right)
+\end{align*} ,
+but we only work with rows from $i = 1$ to $i = n$ because of the Dirichlet conditions, as explained above. The matrix which we row-reduce thus looks like this
+\begin{align*}
+\left(\begin{matrix}
+  b_1   & c_1    & 0      & \dots   & \dots  & 0       & y_1     \\
+  a_2   & b_2    & c_2    & \ddots  &        & \vdots  & \vdots  \\
+  0     & a_3    & b_3    & c_3     & \ddots & \vdots  & \vdots  \\
+ \vdots & \ddots & a_4    & b_4     & \ddots & 0       & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_n     & \vdots  \\
+  0     & \dots  & \dots  & 0       & a_{n}  & b_n     & y_{n}   \\
 \end{matrix}\right)
 \end{align*}
-Presumably, it is already obvious that this set of equations is row-reducable, which is the next step for the algorithm. As all the $u_i$'s are mere multiplication factors in the calculation of their corresponding $f_i$, we row-reduce the combination of $\mathbf{\hat{A}}$ and $\mathbf{\hat{f}}$. The easiest way to accomplish this is to demand that 
+The Gaussian elimination can be split into two parts; a forward substitution were the matrix-elements $a_i$ are set to zero, and a backward substituion were the vector-elements $u_i$ are calculated from known values.
+
+Starting the Gaussian elimination with the second row, row II, a row operation is performed to maintain the validity of the system. The goal is to remove element $a_2$ from the row. This is done by subtracting row II, multiplied with some constant $k$ from row I. For every next row operation, there will then be a new $k_i$ calculated.
+
+\begin{minipage}{0.5\linewidth}
+\begin{align*}
+\left(\begin{matrix}
+  b_1   & c_1    & 0      & \dots   & \dots  & 0       & y_1     \\
+  \tilde{a}_2   & \tilde{b}_2    & \tilde{c}_2    & \ddots  &        & \vdots  & \tilde{y}_2  \\
+  0     & a_3    & b_3    & c_3     & \ddots & \vdots  & \vdots  \\
+ \vdots & \ddots & a_4    & b_4     & \ddots & 0       & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_n     & \vdots  \\
+  0     & \dots  & \dots  & 0       & a_{n}  & b_n     & y_{n}   \\
+\end{matrix}\right)
+\end{align*}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+	\begin{align*}
+	\tilde{\text{II}} &= \text{II} - k_\text{I} \times \text{I}\\
+	\text{where }&k_\text{I} \text{ is determined by}\\
+	\tilde{a}_2 &= 0 = a_2 - k_\text{I}b_1 \quad \Rightarrow k_\text{I} = \frac{a_2}{b_1}\\
+	\tilde{b}_2 &= b_2 - \frac{a_2}{b_1} c_1 \\
+	\tilde{c}_2 &= c_2 - \frac{a_2}{b_1} \times 0 = c_2 \\
+	\tilde{y}_2 &= y_2 - \frac{a_2}{b_1} y_1
+	\end{align*}
+\end{minipage} \\
+
+Moving on to row 3, and performing a similar operation: \\
+
+\begin{minipage}{0.5\linewidth}
+\begin{align*}
+\left(\begin{matrix}
+  b_1   & c_1    & 0      & \dots   & \dots  & 0       & y_1     \\
+  0   & \tilde{b}_2    & c_2    & \ddots  &        & \vdots  & \tilde{y}_2  \\
+  0     & \tilde{a}_3    & \tilde{b}_3    & \tilde{c}_3     & \ddots & \vdots  & \tilde{y}_3  \\
+ \vdots & \ddots & a_4    & b_4     & \ddots & 0       & \vdots  \\
+ \vdots &        & \ddots & \ddots  & \ddots & c_n     & \vdots  \\
+  0     & \dots  & \dots  & 0       & a_{n}  & b_n     & y_{n}   \\
+\end{matrix}\right)
+\end{align*}
+\end{minipage}
+\begin{minipage}{0.5\linewidth}
+	\begin{align*}
+	\tilde{\text{III}} &= \text{II} - k_\text{II} \times \text{II}\\
+	\text{where }&k_\text{II} \text{ is determined by}\\
+\tilde{a}_3 &= 0 = a_3 - k_\text{II}\tilde{b}_2 \quad \Rightarrow k_\text{II} = \frac{a_3}{\tilde{b}_2}\\
+	\tilde{b}_3 &= b_3 - \frac{a_3}{\tilde{b}_2} c_2 \\
+	\tilde{c}_3 &= c_3 - \frac{a_3}{\tilde{b}_2} \times 0 = c_3 \\
+	\tilde{y}_3 &= y_3 - \frac{a_3}{\tilde{b}_2} \tilde{y}_2
+	\end{align*}
+\end{minipage}
+Having repeated this procedure, a pattern emerges and an algorithm can be formulated:
+\begin{align*}
+	\tilde{b}_{i+1} = b_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} c_{i} \\
+	\tilde{y}_{i+1} = y_{i+1} - \frac{a_{i+1}}{\tilde{b}_i} \tilde{y}_i \\
+	i = 1,2,\dots, n
+\end{align*}
+After this procedure, the tridiagonal matrix A is transformed into an uppertriangular matrix. This sort of set of equations can be solved for u, since the last equation has one unknown and the other equations has only two unknowns.  \\
 
 
-\subsubsection{Results}
-\subsubsection{Discussion}
-
-\subsection{(b)}
-\subsubsection{Intro}
-\subsubsection{Method}
-\subsubsection{Results}
-\subsubsection{Discussion}
-
-\subsection{(c)}
-\subsubsection{Intro}
-\subsubsection{Method}
-\subsubsection{Results}
-\subsubsection{Discussion}
-
-\subsection{(d)}
-\subsubsection{Intro}
-\subsubsection{Method}
-\subsubsection{Results}
-\subsubsection{Discussion}
-
-\subsection{(e)}
-\subsubsection{Intro}
-\subsubsection{Method}
-\subsubsection{Results}
-\subsubsection{Discussion}
-
-
+\end{document}
+%WHY??
 \begin{center}
 \line(1,0){450}
 \end{center}
