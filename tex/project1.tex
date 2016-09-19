@@ -135,21 +135,21 @@ so that discretized linear algebra may be committed unto the equation, yielding 
 \line(1,0){450}
 \end{center}
 
-%\newpage
+\newpage
 \tableofcontents
 
 \newpage
-\section{Computational Physics, first project}
-\subsection{The fundamental math}
-\subsubsection{Introduction}
+\section{Introduction}
 The production of this document will inevitably familiarize its authors with the programming language \verb|C++|, and to this end mathematical groundwork must first be elaborated to translate a Poisson equation from continuous calculus form, into a discretized numerical form.
 
 The Poisson equation is rewritten to a simplified form, for which a real solution is given, with which we will compare our numerical approximation to the real solution.
 
 The real motivation for this project, though, is to find a viable numerical method for double integration and the implementation of such.
 
-\subsubsection{Problem}
-%something something dark side about how we decompose the abstract problem into a real programmable problem
+\section{Problem}
+The problem in focus for this project will be to turn a general differential equation into a discretized, numerical problem and code a solver to solve this differential problem. 
+
+A general differential equation that appears often is $$\left(\pd{ }{x}\right)^2 y + k(x)y(x) = f(x)$$ and the Poisson equation is a specialcase of this differntial equation (k=0).
 
 \section{Method}
 \label{section:method}
@@ -340,7 +340,7 @@ y_1 \\
 \text{which will}& \text{ be used in the equation for $n-1$;}\\
 \tilde{y}_{n-1} &= \tilde{b}_{n-1}u_{n-1} + c_{n-1}u_n\\
 \Rightarrow u_{n-1} &= \frac{\tilde{y}_{n-1} - c_{n-1} u_n}{ \tilde{b}_{n-1}}\\
-\Rightarrow u_{n-1} &= \frac{\tilde{y}_{n-1} - \frac{c_{n-1}\tilde{y}_n}{\tilde{b}_n}}{ \tilde{b}_{n-1}}
+\Rightarrow u_{n-1} &= \frac{\tilde{y}_{n-1} - \tilde{u}_{i+1}}{ \tilde{b}_{n-1}}
 \end{align*}
 \end{minipage}
 
@@ -371,10 +371,16 @@ For this purpose, we may simply insert the values that we know each of the vecto
 \begin{minipage}{0.5\linewidth}
 	\begin{align*}
 	\text{with all } &\text{$a_i$ = -1, all $b_i$ = 2, and all $c_i$ = -1:}\\
-	\tilde{b}_2 &= b_2 - \frac{a_2}{b_1} c_1  = 2 - \frac{-1}{2} -1\\
+	\tilde{b}_2 &= b_2 - \frac{a_2}{b_1} c_1  = 2 - \frac{-1}{2} (-1)\\
 	\tilde{y}_2 &= y_2 - \frac{-1}{b_1} y_1
 	\end{align*}
 \end{minipage}
+
+The general algorithm then follows:
+\begin{align*}
+	\tilde{b}_i &= \frac{i+1}{i}\\
+	\tilde{y}_i &= y_i + \frac{\tilde{y}_{i-1}}{\tilde{b}{_i-1}}
+\end{align*}
 
 \begin{center}
 \line(1,0){450}
@@ -544,15 +550,17 @@ The data can be found in the data-folder on the github-repository\footnote{see s
 	\end{figure}
 	
 \section{Conclusion and discussion}
-From \hyperref[section:results]{section 4} it becomes clear that the numerical solvers are quite accurate for n=100 and above(h=1/99 and below). This becomes clear when one examines figure \hyperref[fig:compare_gen_exact]{figure 3} where the approximation by solver lies on top of the exact solution for n=10 and n=100.
+From \hyperref[section:results]{section 4} it becomes clear that the numerical solvers are quite accurate for n=100 and above(h=1/99 and below). This becomes clear when one examines figure \hyperref[fig:compare_gen_exact]{figure 3} where the approximation by solver lies on top of the exact solution for n=100 and n=1000.
 	
 When it comes to computing time, the LU-decomposition is much less efficient(to no surprise for anyone), however there seems to be a slight bug in the timing of specific tridiagonal solver. This method becomes $slower$ than the general solver for high values of n, as opposed to the previous expectation (recall that the specific algorithm calculates by $\simeq$ 4n flops, while the general, algebraic algorithm calculates by $\simeq$ 9n flops).
 	
-By looking at \hyperref[table:flops-per-sec]{table 2} the number of total floating point operations per second should the same for all three methods since they are all run on the same computer, however there are discrepencies when comparing the specific and general solvers, as mentioned earlier. the number of floating point operations per iteration for the LU-decomposition can now be determined by solving for x. This factor x is 7758, 3000 and 39580 for the three recorded instances of LU-decomposition. The results are way away of from eachother (hinting towards errors in the program CPU-timing or calculation), but they are all very much larger than the factors 9 and 4 in the general and specific methods.
+By looking at \hyperref[table:flops-per-sec]{table 3} the number of total floating point operations per second should the same for all three methods since they are all run on the same computer, however there are discrepencies when comparing the specific and general solvers, as mentioned earlier. the number of floating point operations per iteration for the LU-decomposition can now be determined by solving for x. This factor x is 7758, 3000, and 39580 for the three recorded instances of LU-decomposition. The results for x are way away off from eachother (hinting towards errors in the program, CPU-timing, or calculation), but they are all very much larger than the factors 9 and 4 in the general and specific methods.
 
+In \hyperref[table:epsilon]{table 4} the values from the epsilon-plot have been written down. 
 The program was unsuccesful at storing the data for values of n larger then 1e+4, so the graph of epsilon streches over a limited span of values, however a trend still appears. As the step-length decreases the relative error also decreases (with a slope of $\epsilon = h^2$), until it hits a minimum value at $h=10^{-3}$ and starts increasing with a slope of $\epsilon = -h$ as h decreases further.
 
 \section{Appendix - Github}
 \label{section:github}
+\hyperref[github-address]{https://github.com/magnucb/project1}
 
 \end{document}
